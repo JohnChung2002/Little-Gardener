@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "169586516834",
+    "project_id": "little-gardener-c22ec",
+    "storage_bucket": "little-gardener-c22ec.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:169586516834:android:14a0ba59bee867ee14423b",
+        "android_client_info": {
+          "package_name": "com.example.littlegardener"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "169586516834-8kncpqik7cscbeaccl786ekg0ph4vm54.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.littlegardener",
+            "certificate_hash": "9a455bce00fff6744ebcf946bc3452a430ba0859"
+          }
+        },
+        {
+          "client_id": "169586516834-fkpr2pb5hl1vi94e7orp9fdabblusdq9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCIwswASS5c0Q9nK93AGmqmLDsB6f9JPqg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "169586516834-fkpr2pb5hl1vi94e7orp9fdabblusdq9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

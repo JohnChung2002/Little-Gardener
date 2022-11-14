@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".LiveChatActivity">
+
+    <ImageView
+        android:id="@+id/addMessageImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/outline_add_photo_alternate_24"
+        app:layout_constraintTop_toTopOf="@id/messageEditText"
+        app:layout_constraintBottom_toBottomOf="@id/messageEditText"
+        app:layout_constraintStart_toStartOf="@id/cardView"/>
+
+    <EditText
+        android:id="@+id/messageEditText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="10dp"
+        android:layout_gravity="center"
+        android:padding="10dp"
+        android:background="@drawable/edit_text_shadow"
+        android:hint="Say something..."
+        android:inputType="text"
+        app:layout_constraintTop_toTopOf="@id/cardView"
+        app:layout_constraintStart_toEndOf="@id/addMessageImageView"
+        app:layout_constraintEnd_toStartOf="@id/sendButton"
+        app:layout_constraintBottom_toBottomOf="@id/cardView"
+        android:imeOptions="actionSend|flagNoEnterAction" />
+
+    <ImageView
+        android:id="@+id/sendButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:enabled="false"
+        android:src="@drawable/outline_send_gray_24"
+        app:layout_constraintTop_toTopOf="@id/messageEditText"
+        app:layout_constraintStart_toEndOf="@id/messageEditText"
+        app:layout_constraintEnd_toEndOf="@id/cardView"
+        app:layout_constraintBottom_toBottomOf="@id/messageEditText" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardView"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:windowSoftInputMode="adjustPan"
+        app:cardElevation="-1dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
