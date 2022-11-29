@@ -6,52 +6,74 @@
     android:layout_height="match_parent"
     tools:context=".LiveChatActivity">
 
-    <ImageView
-        android:id="@+id/addMessageImageView"
-        android:layout_width="wrap_content"
+    <Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:srcCompat="@drawable/outline_add_photo_alternate_24"
-        app:layout_constraintTop_toTopOf="@id/messageEditText"
-        app:layout_constraintBottom_toBottomOf="@id/messageEditText"
-        app:layout_constraintStart_toStartOf="@id/cardView"/>
-
-    <EditText
-        android:id="@+id/messageEditText"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="10dp"
-        android:layout_gravity="center"
-        android:padding="10dp"
-        android:background="@drawable/edit_text_shadow"
-        android:hint="Say something..."
-        android:inputType="text"
-        app:layout_constraintTop_toTopOf="@id/cardView"
-        app:layout_constraintStart_toEndOf="@id/addMessageImageView"
-        app:layout_constraintEnd_toStartOf="@id/sendButton"
-        app:layout_constraintBottom_toBottomOf="@id/cardView"
-        android:imeOptions="actionSend|flagNoEnterAction" />
-
-    <ImageView
-        android:id="@+id/sendButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:enabled="false"
-        android:src="@drawable/outline_send_gray_24"
-        app:layout_constraintTop_toTopOf="@id/messageEditText"
-        app:layout_constraintStart_toEndOf="@id/messageEditText"
-        app:layout_constraintEnd_toEndOf="@id/cardView"
-        app:layout_constraintBottom_toBottomOf="@id/messageEditText" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:title="Hello"
+        android:titleTextColor="@color/white"
+        android:background="@color/dark_green"/>
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/cardView"
+        android:id="@+id/card_view"
         android:layout_width="match_parent"
-        android:layout_height="80dp"
+        android:layout_height="wrap_content"
         android:windowSoftInputMode="adjustPan"
         app:cardElevation="-1dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="8dp">
+
+            <ImageView
+                android:id="@+id/add_message_image_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                app:srcCompat="@drawable/outline_add_photo_alternate_24"
+                app:layout_constraintTop_toTopOf="@id/message_edit_text"
+                app:layout_constraintBottom_toBottomOf="@id/message_edit_text"
+                app:layout_constraintStart_toStartOf="parent"/>
+
+            <EditText
+                android:id="@+id/message_edit_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="10dp"
+                android:layout_gravity="center"
+                android:padding="10dp"
+                android:background="@drawable/edit_text_shadow"
+                android:hint="Say something..."
+                android:inputType="textMultiLine"
+                android:maxLength="255"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toEndOf="@id/add_message_image_view"
+                app:layout_constraintEnd_toStartOf="@id/send_button"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:imeOptions="actionSend|flagNoEnterAction" />
+
+            <ImageView
+                android:id="@+id/send_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:enabled="false"
+                android:layout_marginEnd="8dp"
+                android:src="@drawable/outline_send_gray_24"
+                app:layout_constraintTop_toTopOf="@id/message_edit_text"
+                app:layout_constraintStart_toEndOf="@id/message_edit_text"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="@id/message_edit_text" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
