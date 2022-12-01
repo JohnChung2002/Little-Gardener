@@ -47,7 +47,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".DashboardActivity"
+            android:name=".SecondaryActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"

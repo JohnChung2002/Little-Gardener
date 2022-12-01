@@ -3,26 +3,19 @@ package com.example.littlegardener
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Button
-import android.widget.EditText
-import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import com.facebook.AccessToken
-import com.facebook.CallbackManager
-import com.facebook.CallbackManager.Factory.create
-import com.facebook.FacebookCallback
-import com.facebook.FacebookException
 import com.facebook.appevents.AppEventsLogger
 import com.facebook.login.LoginManager
-import com.facebook.login.LoginResult
+import com.google.android.gms.auth.api.Auth
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.common.SignInButton
 import com.google.android.gms.tasks.Task
+import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
@@ -31,7 +24,6 @@ import com.google.firebase.ktx.Firebase
 
 
 class MainActivity : AppCompatActivity(), LoginFragment.OnLoginListener, SignUpFragment.OnSignUpListener {
-    private lateinit var auth: FirebaseAuth
     private lateinit var googleSignInClient: GoogleSignInClient
     private lateinit var loginFragment: LoginFragment
 
@@ -53,7 +45,7 @@ class MainActivity : AppCompatActivity(), LoginFragment.OnLoginListener, SignUpF
 
     override fun onStart() {
         super.onStart()
-        val currentUser = auth.currentUser
+        val currentUser = AuthenticationHelper.getAuth().currentUser
         if (currentUser != null) {
             updateUI()
         }
@@ -74,17 +66,13 @@ class MainActivity : AppCompatActivity(), LoginFragment.OnLoginListener, SignUpF
     }
 
     override fun onCredentialsLogin(email: String, password: String) {
-        auth.signInWithEmailAndPassword(email, password)
-            .addOnCompleteListener(this) { task ->
-                if (task.isSuccessful) {
-                    updateUI()
-                } else {
-                    Toast.makeText(
-                        baseContext, "Authentication failed.",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
+        AuthenticationHelper.signInEmailPassword(email, password) { result ->
+            if (result) {
+                updateUI()
+            } else {
+                Toast.makeText(this, "Authentication failed.", Toast.LENGTH_SHORT).show()
             }
+        }
     }
 
     override fun onSignUp() {
@@ -96,17 +84,13 @@ class MainActivity : AppCompatActivity(), LoginFragment.OnLoginListener, SignUpF
     }
 
     override fun onSignUp(email: String, password: String) {
-        auth.createUserWithEmailAndPassword(email, password)
-            .addOnCompleteListener(this) { task ->
-                if (task.isSuccessful) {
-                    updateUI()
-                } else {
-                    Toast.makeText(
-                        baseContext, "User already exists.",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
+        AuthenticationHelper.signUpEmailPassword(email, password) { result ->
+            if (result) {
+                updateUI()
+            } else {
+                Toast.makeText(this, "User already exists", Toast.LENGTH_SHORT).show()
             }
+        }
     }
 
     private fun initGoogleAuth() {
@@ -115,7 +99,6 @@ class MainActivity : AppCompatActivity(), LoginFragment.OnLoginListener, SignUpF
             .requestEmail()
             .build()
         googleSignInClient = GoogleSignIn.getClient(this, gso)
-        auth = Firebase.auth
     }
 
     override fun onGoogleLogin() {
@@ -125,11 +108,7 @@ class MainActivity : AppCompatActivity(), LoginFragment.OnLoginListener, SignUpF
 
     override fun onFacebookLogin(token: AccessToken) {
         val credential = FacebookAuthProvider.getCredential(token.token)
-        auth.signInWithCredential(credential).addOnCompleteListener {
-            if (it.isSuccessful) {
-                updateUI()
-            }
-        }
+        signInOAuth(credential)
     }
 
     override fun onBackPressed() {
@@ -145,7 +124,18 @@ class MainActivity : AppCompatActivity(), LoginFragment.OnLoginListener, SignUpF
                 finish()
             }
             else -> {
-                super.onBackPressed()
+                finishAffinity()
+                finish()
+            }
+        }
+    }
+
+    private fun signInOAuth(credential: AuthCredential) {
+        AuthenticationHelper.signInOAuth(credential) { result ->
+            if (result) {
+                updateUI()
+            } else {
+                Toast.makeText(this, "Authentication failed.", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -155,11 +145,7 @@ class MainActivity : AppCompatActivity(), LoginFragment.OnLoginListener, SignUpF
             val account : GoogleSignInAccount? = task.result
             if (account != null) {
                 val credential = GoogleAuthProvider.getCredential(account.idToken , null)
-                auth.signInWithCredential(credential).addOnCompleteListener {
-                    if (it.isSuccessful) {
-                        updateUI()
-                    }
-                }
+                signInOAuth(credential)
             }
         }else{
             Toast.makeText(this, task.exception.toString() , Toast.LENGTH_SHORT).show()
@@ -167,10 +153,7 @@ class MainActivity : AppCompatActivity(), LoginFragment.OnLoginListener, SignUpF
     }
 
     private fun updateUI() {
-        println(auth.currentUser?.uid)
-        val intent = Intent(this, DashboardActivity::class.java)
-        intent.putExtra("email", auth.currentUser?.email)
-        intent.putExtra("name", auth.currentUser?.displayName)
+        val intent = Intent(this, SecondaryActivity::class.java)
         dashboardActivityLauncher.launch(intent)
     }
 

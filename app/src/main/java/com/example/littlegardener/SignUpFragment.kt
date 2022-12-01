@@ -43,7 +43,7 @@ class SignUpFragment : Fragment() {
             val email = email.text.toString()
             val password1 = password1.text.toString()
             val password2 = password2.text.toString()
-            if (password1 == password2) {
+            if (email.isNotEmpty() && password1.isNotEmpty() && password1 == password2) {
                 callBack.onSignUp(email, password1)
             }
         }
