@@ -16,16 +16,12 @@ import com.facebook.FacebookException
 import com.facebook.login.LoginResult
 import com.google.android.gms.common.SignInButton
 
-/**
- * A simple [Fragment] subclass.
- * Use the [LoginFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class LoginFragment : Fragment() {
 
     interface OnLoginListener {
         fun onCredentialsLogin(email: String, password: String)
         fun onSignUp()
+        fun onForgotPassword()
         fun onGoogleLogin()
         fun onFacebookLogin(token: AccessToken)
     }
@@ -37,6 +33,7 @@ class LoginFragment : Fragment() {
     private lateinit var loginButton: Button
     private lateinit var email: EditText
     private lateinit var password: EditText
+    private lateinit var forgetPassword: TextView
     private lateinit var signUp: TextView
 
     override fun onCreateView(
@@ -54,6 +51,7 @@ class LoginFragment : Fragment() {
         loginButton = view.findViewById(R.id.login_button)
         email = view.findViewById(R.id.email)
         password = view.findViewById(R.id.password)
+        forgetPassword = view.findViewById(R.id.forgot_password)
         signUp = view.findViewById(R.id.sign_up)
         signInWithGoogle = view.findViewById(R.id.sign_in_with_google)
         signInWithFacebook = view.findViewById(R.id.sign_in_with_facebook)
@@ -67,6 +65,9 @@ class LoginFragment : Fragment() {
             if (emailText.isNotEmpty() && passwordText.isNotEmpty()) {
                 callBack.onCredentialsLogin(emailText, passwordText)
             }
+        }
+        forgetPassword.setOnClickListener() {
+            callBack.onForgotPassword()
         }
         signUp.setOnClickListener {
             callBack.onSignUp()

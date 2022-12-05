@@ -31,11 +31,22 @@ class AuthenticationHelper {
             }
         }
 
-        fun signUpEmailPassword(email: String, password: String, listener:(Boolean)->Unit) {
+        fun signUpEmailPassword(email: String, name: String, password: String, listener:(Boolean)->Unit) {
             val auth = getAuth()
             auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener {
                 if (it.isSuccessful) {
-                    FirestoreHelper.createUserEntry()
+                    FirestoreHelper.createUserEntry(name)
+                    listener.invoke(true)
+                } else {
+                    listener.invoke(false)
+                }
+            }
+        }
+
+        fun forgetPassword(email: String, listener:(Boolean)->Unit) {
+            val auth = getAuth()
+            auth.sendPasswordResetEmail(email).addOnCompleteListener {
+                if (it.isSuccessful) {
                     listener.invoke(true)
                 } else {
                     listener.invoke(false)

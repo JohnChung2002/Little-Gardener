@@ -19,12 +19,12 @@ class FirestoreHelper {
             }
         }
 
-        fun createUserEntry() {
+        fun createUserEntry(name: String) {
             val db = getDatabase()
             val user = FirebaseAuth.getInstance().currentUser
             if (user != null) {
                 val data = hashMapOf(
-                    "name" to user.displayName,
+                    "name" to name,
                     "role" to "User"
                 )
                 db.collection("users").document(user.uid).set(data)

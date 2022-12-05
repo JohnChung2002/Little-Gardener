@@ -10,18 +10,18 @@ class ViewPagerAdapter (private val appCompatActivity: AppCompatActivity, privat
     override fun createFragment(position: Int): Fragment {
         if (role == "Admin") {
             return when (position) {
-                0 -> HomeFragment.newInstance("Test", "Test")
-                1 -> ChatFragment.newInstance("Test", "Test")
-                2 -> NotificationFragment.newInstance("Test", "Test")
-                else -> UserFragment.newInstance("Test", "Test")
+                0 -> HomeFragment.newInstance()
+                1 -> ChatFragment.newInstance()
+                2 -> NotificationFragment.newInstance()
+                else -> UserFragment.newInstance()
             }
         } else {
             return when (position) {
-                0 -> HomeFragment.newInstance("Test", "Test")
-                1 -> ChatFragment.newInstance("Test", "Test")
-                2 -> NotificationFragment.newInstance("Test", "Test")
-                3 -> CartFragment.newInstance("Test", "Test")
-                else -> UserFragment.newInstance("Test", "Test")
+                0 -> HomeFragment.newInstance()
+                1 -> ChatFragment.newInstance()
+                2 -> NotificationFragment.newInstance()
+                3 -> CartFragment.newInstance()
+                else -> UserFragment.newInstance()
             }
         }
     }

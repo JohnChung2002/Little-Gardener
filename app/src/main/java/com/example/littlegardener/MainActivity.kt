@@ -83,8 +83,16 @@ class MainActivity : AppCompatActivity(), LoginFragment.OnLoginListener, SignUpF
             .commit()
     }
 
-    override fun onSignUp(email: String, password: String) {
-        AuthenticationHelper.signUpEmailPassword(email, password) { result ->
+    override fun onForgotPassword() {
+        supportFragmentManager.popBackStackImmediate("login",0)
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.constraint_layout, ForgotPasswordFragment.newInstance())
+            .addToBackStack("forgotPassword")
+            .commit()
+    }
+
+    override fun onSignUp(email: String, name: String, password: String) {
+        AuthenticationHelper.signUpEmailPassword(email, name, password) { result ->
             if (result) {
                 updateUI()
             } else {
@@ -122,6 +130,13 @@ class MainActivity : AppCompatActivity(), LoginFragment.OnLoginListener, SignUpF
             }
             is LoginFragment -> {
                 finish()
+            }
+            is ForgotPasswordFragment -> {
+                supportFragmentManager.popBackStackImmediate("forgotPassword",0)
+                supportFragmentManager.beginTransaction()
+                    .add(R.id.constraint_layout, loginFragment)
+                    .addToBackStack("login")
+                    .commit()
             }
             else -> {
                 finishAffinity()
