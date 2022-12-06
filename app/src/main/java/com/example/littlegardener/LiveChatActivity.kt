@@ -51,6 +51,7 @@ class LiveChatActivity : AppCompatActivity() {
     private fun initListeners() {
         addMessageImageView.setOnClickListener {
             val intent = Intent(Intent.ACTION_PICK)
+            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
             intent.type = "image/*"
             attachImage.launch(intent)
         }

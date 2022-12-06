@@ -28,7 +28,7 @@
         android:textStyle="bold"/>
 
     <TextView
-        android:id="@+id/notification_time"
+        android:id="@+id/notification_timestamp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="timestamp"

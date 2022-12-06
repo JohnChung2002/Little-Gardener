@@ -1,6 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<GridLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:layout_margin="10dp"
+    android:columnCount="2"
+    android:textAlignment="center"
+    android:alignmentMode="alignMargins">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <TextView
+        android:id="@+id/create_product"
+        android:layout_width="0dp"
+        android:layout_columnWeight="1"
+        android:layout_height="wrap_content"
+        android:background="@drawable/rounded_shape"
+        android:paddingStart="40dp"
+        android:paddingTop="40dp"
+        android:paddingEnd="10dp"
+        android:paddingBottom="10dp"
+        android:layout_margin="8dp"
+        android:text="Create Product Listing"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:textAlignment="textEnd" />
+
+    <TextView
+        android:id="@+id/edit_product"
+        android:layout_width="0dp"
+        android:layout_columnWeight="1"
+        android:layout_height="wrap_content"
+        android:background="@drawable/rounded_shape"
+        android:paddingStart="40dp"
+        android:paddingTop="40dp"
+        android:paddingEnd="10dp"
+        android:paddingBottom="10dp"
+        android:layout_margin="8dp"
+        android:text="Edit Product Listing"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:textAlignment="textEnd" />
+
+    <TextView
+        android:id="@+id/delete_product"
+        android:layout_width="0dp"
+        android:layout_columnWeight="1"
+        android:layout_height="wrap_content"
+        android:background="@drawable/rounded_shape"
+        android:paddingStart="40dp"
+        android:paddingTop="40dp"
+        android:paddingEnd="10dp"
+        android:paddingBottom="10dp"
+        android:layout_margin="8dp"
+        android:text="Delete Product Listing"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:textAlignment="textEnd" />
+
+    <TextView
+        android:id="@+id/manage_orders"
+        android:layout_width="0dp"
+        android:layout_columnWeight="1"
+        android:layout_height="wrap_content"
+        android:background="@drawable/rounded_shape"
+        android:paddingStart="40dp"
+        android:paddingTop="40dp"
+        android:paddingEnd="10dp"
+        android:paddingBottom="10dp"
+        android:layout_margin="8dp"
+        android:text="Manage Customer Orders"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:textAlignment="textEnd" />
+
+</GridLayout>
