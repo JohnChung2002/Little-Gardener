@@ -17,36 +17,23 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat.getSystemService
 
 class HomeFragment : Fragment() {
-    private lateinit var currContext: Context
     private lateinit var searchEditText: EditText
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_home, container, false)
-        currContext = view.context
         initUI(view)
-        initListeners(view)
+        initListeners()
         return view
     }
 
     private fun initUI(view: View) {
-        FirestoreHelper.getAccountInformation {
-             view.findViewById<TextView>(R.id.email).text = it
-        }
         searchEditText = view.findViewById(R.id.edit_text_search)
     }
 
-    private fun initListeners(view: View) {
-        view.findViewById<Button>(R.id.test).setOnClickListener {
-            val intent = Intent(context, LiveChatActivity::class.java)
-            startActivity(intent)
-        }
+    private fun initListeners() {
         searchEditText.setOnEditorActionListener { textView, i, _ ->
             if ((i == EditorInfo.IME_ACTION_SEARCH) && (textView.text.isNotEmpty())) {
                 textView.text = ""

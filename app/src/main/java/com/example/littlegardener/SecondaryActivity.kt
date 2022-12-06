@@ -12,7 +12,6 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 class SecondaryActivity : AppCompatActivity(), UserFragment.OnUserInteraction, MessageAdapter.MessageListener {
     private lateinit var viewPager: ViewPager2
     private lateinit var bottomNavigationView: BottomNavigationView
-    private var chatRecyclerList: MutableList<ChatItem> = mutableListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,23 +34,14 @@ class SecondaryActivity : AppCompatActivity(), UserFragment.OnUserInteraction, M
                 initUserNavigationClickListener()
             }
             viewPager.isUserInputEnabled = false
-            viewPager.adapter = ViewPagerAdapter(this, chatRecyclerList, tabItems, it)
-        }
-        FirestoreHelper.getChatList { chats ->
-            for (chatId in chats) {
-                RealtimeDBHelper.loadUserName(chatId) {
-                    chatRecyclerList.add(ChatItem(chatId, it, "chatImage"))
-                }
-            }
+            viewPager.adapter = ViewPagerAdapter(this, tabItems, it)
         }
     }
 
     private fun initUserNavigationClickListener() {
         bottomNavigationView.setOnItemSelectedListener {
             val manager = this.getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-            if (manager != null) {
-                manager.hideSoftInputFromWindow(this.currentFocus?.windowToken, 0)
-            }
+            manager.hideSoftInputFromWindow(this.currentFocus?.windowToken, 0)
             when (it.itemId) {
                 R.id.home_icon -> {
                     viewPager.currentItem = 0
@@ -114,10 +104,9 @@ class SecondaryActivity : AppCompatActivity(), UserFragment.OnUserInteraction, M
         finish()
     }
 
-    override fun onMessageClicked(chatId: String, chatName: String) {
+    override fun onMessageClicked(chatItem: ChatItem) {
         val intent = Intent(this, LiveChatActivity::class.java)
-        intent.putExtra("chatId", chatId)
-        intent.putExtra("chatName", chatName)
+        intent.putExtra("chatItem", chatItem)
         startActivity(intent)
     }
 }

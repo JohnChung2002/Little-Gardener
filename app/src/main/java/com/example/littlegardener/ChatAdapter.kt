@@ -8,38 +8,39 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-class ChatAdapter(private val chatList: List<ChatItem>): RecyclerView.Adapter<ChatAdapter.ViewChat>() {
-    interface ChatListener {
-        fun onMessageClicked(chatId: String, chatName: String)
-    }
+private const val SENT = 1
+private const val RECEIVED = 2
 
-    private lateinit var callback: ChatListener
-    private lateinit var viewContext: Context
-    private lateinit var viewActivity: Activity
-
+class ChatAdapter(private val chatsHashmap: MutableMap<String, Message>): RecyclerView.Adapter<ChatAdapter.ViewChat>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewChat {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.message_item, parent, false)
-        viewContext = parent.context
-        viewActivity = viewContext as Activity
-        callback = viewActivity as ChatListener
+        val view = if (viewType == SENT) {
+            LayoutInflater.from(parent.context).inflate(R.layout.sent_message, parent, false)
+        } else {
+            LayoutInflater.from(parent.context).inflate(R.layout.received_message, parent, false)
+        }
         return ViewChat(view)
     }
 
     override fun getItemCount(): Int {
-        return chatList.size
+        return chatsHashmap.size
     }
 
     override fun onBindViewHolder(holder: ViewChat, position: Int) {
-        val chatItem = chatList[position]
-        holder.itemView.setOnClickListener {
-            callback.onMessageClicked(chatItem.id!!, chatItem.name)
-        }
+        val chatItem = chatsHashmap.values.elementAt(position)
         holder.bind(chatItem)
     }
 
+    override fun getItemViewType(position: Int): Int {
+        val chatItem = chatsHashmap.values.elementAt(position)
+        if (chatItem.sender == AuthenticationHelper.getAuth().currentUser?.uid) {
+            return SENT
+        }
+        return RECEIVED
+    }
+
     class ViewChat(itemView: View): RecyclerView.ViewHolder(itemView) {
-        fun bind(chatItem: ChatItem) {
-            itemView.findViewById<TextView>(R.id.user_name).text = chatItem.name
+        fun bind(message: Message) {
+            itemView.findViewById<TextView>(R.id.messageTextView).text = message.message
         }
     }
 }

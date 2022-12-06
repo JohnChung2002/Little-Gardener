@@ -9,7 +9,15 @@ class RealtimeDBHelper {
             return FirebaseDatabase.getInstance()
         }
 
-        fun loadUserName(id: String, listener: (String) -> Unit) {
+        fun getChatGroupReferences(id: String): DatabaseReference {
+            return getDatabase().getReference("chats").child(id).child("parties")
+        }
+
+        fun getChatReference(chatId: String):DatabaseReference {
+            return getDatabase().getReference("chats").child(chatId).child("messages")
+        }
+
+        fun loadUserNameId(id: String, listener: (String, String) -> Unit) {
             val sender = AuthenticationHelper.getAuth().currentUser?.uid
             val db = getDatabase()
             db.getReference("chats").child(id).child("parties").addListenerForSingleValueEvent(object : ValueEventListener {
@@ -18,7 +26,7 @@ class RealtimeDBHelper {
                     parties.forEach {
                         if (it.key != sender) {
                             FirestoreHelper.getAccountName(it.key.toString()) { name ->
-                                listener.invoke(name)
+                                listener.invoke(name, it.key.toString())
                             }
                         }
                     }
@@ -29,24 +37,12 @@ class RealtimeDBHelper {
             })
         }
 
-        fun getChatMessages(chatId: String, listener: (HashMap<String, Message>) -> Unit) {
-            val messageHashmap: HashMap<String, Message> = hashMapOf()
-            val db = getDatabase()
-            db.getReference("chats").child(chatId).child("messages").addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    val messages = snapshot.children
-                    for (message in messages) {
-                        val msg = message.getValue(Message::class.java)
-                        if (msg != null) {
-                            messageHashmap[message.key.toString()] = msg
-                        }
-                    }
-                    listener.invoke(messageHashmap)
-                }
-
-                override fun onCancelled(error: DatabaseError) {
-                }
-            })
+        fun pushMessage(chatId: String, message: Message) {
+            val ref = getChatReference(chatId)
+            val key = ref.push().key
+            if (key != null) {
+                ref.child(key).setValue(message)
+            }
         }
 
         fun loadChatGroups(listener: (List<ChatGroup>) -> Unit) {

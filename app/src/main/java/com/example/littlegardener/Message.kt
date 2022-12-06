@@ -11,8 +11,9 @@ data class ChatGroup(
 
 @Parcelize
 data class ChatItem(
-    val id: String?,
+    val id: String,
     val name: String,
+    val receiver: String,
     val image: String?
 ): Parcelable
 
@@ -20,6 +21,5 @@ data class Message(
     val sender: String = "",
     val receiver: String = "",
     val type: String = "",
-    val message: String = "",
-    val time: String = ""
+    val message: String = ""
 )
