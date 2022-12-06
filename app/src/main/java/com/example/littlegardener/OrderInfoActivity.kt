@@ -8,4 +8,16 @@ class OrderInfoActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_order_info)
     }
+
+    private fun initUI() {
+
+    }
+
+    private fun loadRecyclerView() {
+
+    }
+
+    private fun loadOrderInfo() {
+
+    }
 }

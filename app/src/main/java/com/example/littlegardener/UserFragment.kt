@@ -15,10 +15,6 @@ class UserFragment : Fragment() {
         fun signOut()
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -34,7 +30,6 @@ class UserFragment : Fragment() {
             callback.signOut()
         }
     }
-
 
     companion object {
         @JvmStatic

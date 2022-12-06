@@ -1,17 +1,25 @@
 package com.example.littlegardener
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat.getSystemService
 
 class HomeFragment : Fragment() {
+    private lateinit var currContext: Context
+    private lateinit var searchEditText: EditText
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -21,6 +29,7 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_home, container, false)
+        currContext = view.context
         initUI(view)
         initListeners(view)
         return view
@@ -30,6 +39,7 @@ class HomeFragment : Fragment() {
         FirestoreHelper.getAccountInformation {
              view.findViewById<TextView>(R.id.email).text = it
         }
+        searchEditText = view.findViewById(R.id.edit_text_search)
     }
 
     private fun initListeners(view: View) {
@@ -37,7 +47,7 @@ class HomeFragment : Fragment() {
             val intent = Intent(context, LiveChatActivity::class.java)
             startActivity(intent)
         }
-        view.findViewById<EditText>(R.id.edit_text_search).setOnEditorActionListener { textView, i, keyEvent ->
+        searchEditText.setOnEditorActionListener { textView, i, _ ->
             if ((i == EditorInfo.IME_ACTION_SEARCH) && (textView.text.isNotEmpty())) {
                 textView.text = ""
                 val intent = Intent(context, LiveChatActivity::class.java)

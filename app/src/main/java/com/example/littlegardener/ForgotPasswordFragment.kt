@@ -18,7 +18,6 @@ class ForgotPasswordFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_forgot_password, container, false)
         emailEditText = view.findViewById(R.id.email)
         submitButton = view.findViewById(R.id.submit_button)
@@ -31,7 +30,9 @@ class ForgotPasswordFragment : Fragment() {
             val email = emailEditText.text.toString()
             val validEmail = validateEmail(email)
             if (validEmail) {
-                Toast.makeText(context, "If your account exists, an email would be sent to your email.", Toast.LENGTH_SHORT).show()
+                AuthenticationHelper.forgetPassword(email) {
+                    Toast.makeText(context, "If your account exists, an email would be sent to your email.", Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }

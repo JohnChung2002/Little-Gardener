@@ -1,18 +1,18 @@
 package com.example.littlegardener
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Button
-import android.widget.TextView
+import android.view.inputmethod.InputMethodManager
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
 
-class SecondaryActivity : AppCompatActivity(), UserFragment.OnUserInteraction {
+
+class SecondaryActivity : AppCompatActivity(), UserFragment.OnUserInteraction, MessageAdapter.MessageListener {
     private lateinit var viewPager: ViewPager2
     private lateinit var bottomNavigationView: BottomNavigationView
+    private var chatRecyclerList: MutableList<ChatItem> = mutableListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,12 +35,23 @@ class SecondaryActivity : AppCompatActivity(), UserFragment.OnUserInteraction {
                 initUserNavigationClickListener()
             }
             viewPager.isUserInputEnabled = false
-            viewPager.adapter = ViewPagerAdapter(this, tabItems, it)
+            viewPager.adapter = ViewPagerAdapter(this, chatRecyclerList, tabItems, it)
+        }
+        FirestoreHelper.getChatList { chats ->
+            for (chatId in chats) {
+                RealtimeDBHelper.loadUserName(chatId) {
+                    chatRecyclerList.add(ChatItem(chatId, it, "chatImage"))
+                }
+            }
         }
     }
 
     private fun initUserNavigationClickListener() {
         bottomNavigationView.setOnItemSelectedListener {
+            val manager = this.getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+            if (manager != null) {
+                manager.hideSoftInputFromWindow(this.currentFocus?.windowToken, 0)
+            }
             when (it.itemId) {
                 R.id.home_icon -> {
                     viewPager.currentItem = 0
@@ -68,6 +79,10 @@ class SecondaryActivity : AppCompatActivity(), UserFragment.OnUserInteraction {
 
     private fun initAdminNavigationClickListener() {
         bottomNavigationView.setOnItemSelectedListener {
+            val manager = this.getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+            if (manager != null) {
+                manager.hideSoftInputFromWindow(this.currentFocus?.windowToken, 0)
+            }
             when (it.itemId) {
                 R.id.home_icon -> {
                     viewPager.currentItem = 0
@@ -90,11 +105,19 @@ class SecondaryActivity : AppCompatActivity(), UserFragment.OnUserInteraction {
     }
 
     override fun onBackPressed() {
+        finishAffinity()
     }
 
     override fun signOut() {
         AuthenticationHelper.signOut()
         setResult(RESULT_OK)
         finish()
+    }
+
+    override fun onMessageClicked(chatId: String, chatName: String) {
+        val intent = Intent(this, LiveChatActivity::class.java)
+        intent.putExtra("chatId", chatId)
+        intent.putExtra("chatName", chatName)
+        startActivity(intent)
     }
 }

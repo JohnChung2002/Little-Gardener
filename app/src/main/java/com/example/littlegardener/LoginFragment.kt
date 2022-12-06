@@ -31,8 +31,8 @@ class LoginFragment : Fragment() {
     private lateinit var signInWithGoogle : SignInButton
     private lateinit var signInWithFacebook : com.facebook.login.widget.LoginButton
     private lateinit var loginButton: Button
-    private lateinit var email: EditText
-    private lateinit var password: EditText
+    private lateinit var emailEditText: EditText
+    private lateinit var passwordEditText: EditText
     private lateinit var forgetPassword: TextView
     private lateinit var signUp: TextView
 
@@ -49,8 +49,8 @@ class LoginFragment : Fragment() {
 
     private fun initUI(view: View) {
         loginButton = view.findViewById(R.id.login_button)
-        email = view.findViewById(R.id.email)
-        password = view.findViewById(R.id.password)
+        emailEditText = view.findViewById(R.id.email)
+        passwordEditText = view.findViewById(R.id.password)
         forgetPassword = view.findViewById(R.id.forgot_password)
         signUp = view.findViewById(R.id.sign_up)
         signInWithGoogle = view.findViewById(R.id.sign_in_with_google)
@@ -60,9 +60,11 @@ class LoginFragment : Fragment() {
 
     private fun initListeners() {
         loginButton.setOnClickListener() {
-            var emailText = email.text.toString()
-            var passwordText = password.text.toString()
-            if (emailText.isNotEmpty() && passwordText.isNotEmpty()) {
+            var emailText = emailEditText.text.toString()
+            var passwordText = passwordEditText.text.toString()
+            val validEmail = validateEmail(emailText)
+            val validPassword = validatePassword(passwordText)
+            if (validEmail && validPassword) {
                 callBack.onCredentialsLogin(emailText, passwordText)
             }
         }
@@ -89,6 +91,22 @@ class LoginFragment : Fragment() {
             override fun onError(error: FacebookException) {
             }
         })
+    }
+
+    private fun validateEmail(email: String):Boolean {
+        val valid = android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
+        if (!valid) {
+            emailEditText.error = "Invalid email"
+        }
+        return valid
+    }
+
+    private fun validatePassword(password: String):Boolean {
+        val valid = password.length >= 6
+        if (!valid) {
+            passwordEditText.error = "Password cannot be empty"
+        }
+        return valid
     }
 
     companion object {
