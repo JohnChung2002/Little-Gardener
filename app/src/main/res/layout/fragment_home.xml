@@ -18,7 +18,7 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="8dp"
             android:layout_marginTop="8dp"
-            android:background="@drawable/rounded_shape"
+            android:background="@drawable/edit_text_shape"
             android:hint="🔍 Search"
             android:imeOptions="actionSearch"
             android:inputType="text"

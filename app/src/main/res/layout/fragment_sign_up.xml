@@ -93,6 +93,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="40dp"
         android:text="Sign Up"
+        android:background="@drawable/main_gradient"
         android:textAllCaps="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

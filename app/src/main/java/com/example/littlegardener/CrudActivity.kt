@@ -67,6 +67,11 @@ class CrudActivity : AppCompatActivity(), CrudProductAdapter.OnProductClickListe
         toolbar.title = title
     }
 
+    private fun customTitle(title: String) {
+        toolbar = findViewById(R.id.toolbar)
+        toolbar.title = title
+    }
+
     private fun loadAddProductDetails() {
         setTitle()
         initUIFields()
@@ -186,14 +191,15 @@ class CrudActivity : AppCompatActivity(), CrudProductAdapter.OnProductClickListe
     }
 
     private fun loadListProductDetails(type: String) {
-        setTitle()
         productListRecyclerView = findViewById(R.id.product_recycler_view)
         productListRecyclerView.layoutManager = GridLayoutManager(this, 2)
         productAdapter = CrudProductAdapter(type, productList)
         productListRecyclerView.adapter = productAdapter
         if (this::category.isInitialized) {
+            customTitle("${category.replaceFirstChar {it.uppercase()}} Products")
             loadCategoriesProductListener()
         } else {
+            setTitle()
             loadProductListener()
         }
     }
@@ -237,6 +243,10 @@ class CrudActivity : AppCompatActivity(), CrudProductAdapter.OnProductClickListe
                 productAdapter.notifyDataSetChanged()
             }
         }
+    }
+
+    private fun loadViewProductDetails() {
+
     }
 
     override fun onProductEditClick(product: Product) {
