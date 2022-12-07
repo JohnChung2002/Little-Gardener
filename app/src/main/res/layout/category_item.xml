@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/category"
+        android:layout_width="match_parent"
+        android:layout_columnWeight="1"
+        android:layout_height="wrap_content"
+        android:background="@drawable/rounded_shape"
+        android:paddingStart="40dp"
+        android:paddingTop="40dp"
+        android:paddingEnd="10dp"
+        android:paddingBottom="10dp"
+        android:layout_margin="8dp"
+        android:text="Manage Customer Orders"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:textAlignment="textEnd" />

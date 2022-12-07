@@ -106,6 +106,10 @@ class FirestoreHelper {
             }
         }
 
+        fun getCategoriesCollection(): CollectionReference {
+            return getDatabase().collection("categories")
+        }
+
         private fun updateToCategories(id: String, category: String) {
             val db = getDatabase()
             db.collection("categories").document(category).get().addOnSuccessListener {

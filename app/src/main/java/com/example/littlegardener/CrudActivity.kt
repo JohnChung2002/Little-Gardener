@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView
 
 class CrudActivity : AppCompatActivity(), CrudProductAdapter.OnProductClickListener {
     private lateinit var type: String
+    private lateinit var category: String
     private lateinit var rootLayout: ConstraintLayout
     private lateinit var viewLayout: ConstraintLayout
     private lateinit var scrollLayout: ScrollView
@@ -39,6 +40,9 @@ class CrudActivity : AppCompatActivity(), CrudProductAdapter.OnProductClickListe
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_crud)
         type = intent.getStringExtra("type")!!
+        if (type == "view") {
+            category = intent.getStringExtra("category")!!
+        }
         initUI()
     }
 
@@ -187,7 +191,27 @@ class CrudActivity : AppCompatActivity(), CrudProductAdapter.OnProductClickListe
         productListRecyclerView.layoutManager = GridLayoutManager(this, 2)
         productAdapter = CrudProductAdapter(type, productList)
         productListRecyclerView.adapter = productAdapter
-        loadProductListener()
+        if (this::category.isInitialized) {
+            loadCategoriesProductListener()
+        } else {
+            loadProductListener()
+        }
+    }
+
+    private fun loadCategoriesProductListener() {
+        val collection = FirestoreHelper.getProductCollection()
+        collection.whereEqualTo("category", category).addSnapshotListener { value, error ->
+            if (error != null) {
+                return@addSnapshotListener
+            }
+            productList.clear()
+            for (doc in value!!) {
+                val product = doc.toObject(Product::class.java)
+                product.id = doc.id
+                productList.add(product)
+            }
+            productAdapter.notifyDataSetChanged()
+        }
     }
 
     private fun loadProductListener() {
@@ -220,10 +244,15 @@ class CrudActivity : AppCompatActivity(), CrudProductAdapter.OnProductClickListe
         scrollLayout = LayoutInflater.from(this).inflate(R.layout.add_edit_product_layout, rootLayout, false) as ScrollView
         rootLayout.addView(scrollLayout)
         currProduct = product
+        type = "edit"
         val uriList: MutableList<Uri> = mutableListOf()
         product.images.forEach{ s -> uriList.add(Uri.parse(s)) }
         imagesList = uriList
         loadEditProductDetails()
+    }
+
+    override fun onProductShowClick(product: Product) {
+        println(product.id)
     }
 
     private fun finishEditLayout() {
@@ -241,6 +270,4 @@ class CrudActivity : AppCompatActivity(), CrudProductAdapter.OnProductClickListe
             super.onBackPressed()
         }
     }
-
-
 }

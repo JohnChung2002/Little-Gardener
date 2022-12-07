@@ -9,7 +9,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 
-class SecondaryActivity : AppCompatActivity(), UserFragment.OnUserInteraction, MessageAdapter.MessageListener {
+class SecondaryActivity : AppCompatActivity(), HomeCategoryAdapter.CategoryListener, UserFragment.OnUserInteraction, MessageAdapter.MessageListener {
     private lateinit var viewPager: ViewPager2
     private lateinit var bottomNavigationView: BottomNavigationView
 
@@ -107,6 +107,13 @@ class SecondaryActivity : AppCompatActivity(), UserFragment.OnUserInteraction, M
     override fun onMessageClicked(chatItem: ChatItem) {
         val intent = Intent(this, LiveChatActivity::class.java)
         intent.putExtra("chatItem", chatItem)
+        startActivity(intent)
+    }
+
+    override fun onCategoryClicked(category: String) {
+        val intent = Intent(this, CrudActivity::class.java)
+        intent.putExtra("type", "view")
+        intent.putExtra("category", category)
         startActivity(intent)
     }
 }

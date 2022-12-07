@@ -22,6 +22,8 @@ import androidx.recyclerview.widget.RecyclerView
 class HomeFragment : Fragment() {
     private lateinit var searchEditText: EditText
     private lateinit var viewStub: ViewStub
+    private lateinit var categoryAdapter: HomeCategoryAdapter
+    private var categoryList: MutableList<String> = mutableListOf()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -89,7 +91,25 @@ class HomeFragment : Fragment() {
     private fun loadUserOptions(view: View) {
         val recyclerView = view.findViewById<RecyclerView>(R.id.user_recycler_view)
         recyclerView.layoutManager = GridLayoutManager(context, 2)
-        recyclerView.adapter = HomeCategoryAdapter()
+        loadCategoryListener()
+        categoryAdapter = HomeCategoryAdapter(categoryList)
+        recyclerView.adapter = categoryAdapter
+    }
+
+    private fun loadCategoryListener() {
+        val ref = FirestoreHelper.getCategoriesCollection()
+        ref.addSnapshotListener { snapshot, e ->
+            if (e != null) {
+                return@addSnapshotListener
+            }
+            if (snapshot != null) {
+                categoryList.clear()
+                for (document in snapshot) {
+                    categoryList.add(document.id)
+                }
+                categoryAdapter.notifyDataSetChanged()
+            }
+        }
     }
 
     companion object {

@@ -13,6 +13,7 @@ import com.bumptech.glide.Glide
 class CrudProductAdapter(private val type: String, private val productList: List<Product>): RecyclerView.Adapter<CrudProductAdapter.ViewProduct>() {
     interface OnProductClickListener {
         fun onProductEditClick(product: Product)
+        fun onProductShowClick(product: Product)
     }
 
     private lateinit var viewContext: Context
@@ -33,9 +34,13 @@ class CrudProductAdapter(private val type: String, private val productList: List
             holder.itemView.setOnClickListener {
                 callback.onProductEditClick(productItem)
             }
-        } else {
+        } else if (type == "delete") {
             holder.itemView.setOnClickListener {
                 confirmDelete(productItem)
+            }
+        } else {
+            holder.itemView.setOnClickListener {
+                callback.onProductShowClick(productItem)
             }
         }
         holder.bind(productItem)
