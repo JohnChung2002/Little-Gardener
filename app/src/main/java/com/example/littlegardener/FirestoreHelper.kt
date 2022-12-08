@@ -105,6 +105,13 @@ class FirestoreHelper {
             }
         }
 
+        fun getProductPrice(id: String, listener: (Double) -> Unit) {
+            val db = getProductCollection()
+            db.document(id).get().addOnSuccessListener {
+                listener.invoke(it.get("price").toString().toDouble())
+            }
+        }
+
         fun checkIfChatExists(receiver: String, listener: (String) -> Unit) {
             val sender = AuthenticationHelper.getCurrentUserUid()
             val db = getDatabase().collection("users")
