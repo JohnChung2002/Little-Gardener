@@ -6,12 +6,17 @@
     android:layout_height="match_parent">
 
         <ScrollView
+            android:id="@+id/scroll_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="0dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/order_options">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="wrap_content">
 
                         <com.smarteist.autoimageslider.SliderView
                             android:id="@+id/slider"
@@ -53,7 +58,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
                             android:layout_marginHorizontal="8dp"
-                            android:textSize="20sp"
+                            android:textSize="16sp"
                             android:textColor="@color/black"
                             android:text="Price: "
                             android:textStyle="bold"
@@ -65,7 +70,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:text="RM20.00"
-                            android:textSize="20sp"
+                            android:textSize="18sp"
                             android:textColor="@color/navy_blue"
                             app:layout_constraintTop_toTopOf="@id/product_price_title"
                             app:layout_constraintBottom_toBottomOf="@id/product_price_title"
@@ -76,7 +81,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Category: "
-                            android:textSize="18sp"
+                            android:textSize="16sp"
                             android:textStyle="bold"
                             android:textColor="@color/black"
                             android:layout_marginTop="8dp"
@@ -89,7 +94,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Categ"
-                            android:textSize="18sp"
+                            android:textSize="16sp"
                             app:layout_constraintStart_toEndOf="@id/product_category_title"
                             app:layout_constraintTop_toTopOf="@id/product_category_title"
                             app:layout_constraintBottom_toBottomOf="@id/product_category_title"/>
@@ -99,7 +104,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Description"
-                            android:textSize="18sp"
+                            android:textSize="16sp"
                             android:layout_marginTop="8dp"
                             android:layout_marginHorizontal="8dp"
                             android:textColor="@color/black"
@@ -112,7 +117,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:text="Product Description"
-                            android:textSize="18sp"
+                            android:textSize="14sp"
                             android:layout_marginTop="8dp"
                             android:layout_marginHorizontal="8dp"
                             android:textColor="@color/black"
@@ -125,12 +130,15 @@
         </ScrollView>
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/order_options"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:labelVisibilityMode="labeled"
+            app:itemIconTint="@color/black"
+            app:itemTextColor="@color/black"
             app:menu="@menu/product_options"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

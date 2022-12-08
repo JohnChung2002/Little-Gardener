@@ -13,6 +13,8 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.smarteist.autoimageslider.SliderView
 
 
 class CrudActivity : AppCompatActivity(), CrudProductAdapter.OnProductClickListener {
@@ -35,12 +37,15 @@ class CrudActivity : AppCompatActivity(), CrudProductAdapter.OnProductClickListe
     private lateinit var productImagesRecyclerView: RecyclerView
     private lateinit var currProduct: Product
     private var imagesList = mutableListOf<Uri>()
+    private lateinit var sliderView: SliderView
+    private lateinit var imageSliderAdapter: ImageSliderAdapter
+    private lateinit var productOption: BottomNavigationView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_crud)
         type = intent.getStringExtra("type")!!
-        if (type == "view") {
+        if (type == "view_list") {
             category = intent.getStringExtra("category")!!
         }
         initUI()
@@ -246,7 +251,36 @@ class CrudActivity : AppCompatActivity(), CrudProductAdapter.OnProductClickListe
     }
 
     private fun loadViewProductDetails() {
-
+        sliderView = findViewById(R.id.slider)
+        imageSliderAdapter = ImageSliderAdapter(currProduct.images as MutableList<String>)
+        sliderView.setSliderAdapter(imageSliderAdapter, currProduct.images.size != 1)
+        sliderView.setIndicatorVisibility(true)
+        productOption = findViewById(R.id.order_options)
+        findViewById<TextView>(R.id.product_title).text = currProduct.name
+        val price = "RM%.2f".format(currProduct.price)
+        findViewById<TextView>(R.id.product_price).text = price
+        findViewById<TextView>(R.id.product_category).text = currProduct.category
+        findViewById<TextView>(R.id.product_description).text = currProduct.description
+        productOption.setOnItemSelectedListener {
+            when (it.itemId) {
+                R.id.chat_icon -> {
+                    val intent = Intent(this, LiveChatActivity::class.java)
+                    intent.putExtra("type", "new")
+                    intent.putExtra("chatItem", ChatItem(receiver = currProduct.seller))
+                    startActivity(intent)
+                    true
+                }
+                R.id.cart_icon -> {
+                    FirestoreHelper.addProductToCart(currProduct)
+                    Toast.makeText(this, "Product added to cart", Toast.LENGTH_SHORT).show()
+                    true
+                }
+                else -> {
+                    //Order Activity
+                    true
+                }
+            }
+        }
     }
 
     override fun onProductEditClick(product: Product) {
@@ -262,6 +296,12 @@ class CrudActivity : AppCompatActivity(), CrudProductAdapter.OnProductClickListe
     }
 
     override fun onProductShowClick(product: Product) {
+        rootLayout.removeAllViews()
+        viewLayout = LayoutInflater.from(this).inflate(R.layout.view_product_layout, rootLayout, false) as ConstraintLayout
+        rootLayout.addView(viewLayout)
+        currProduct = product
+        type = "view"
+        loadViewProductDetails()
         println(product.id)
     }
 
@@ -273,11 +313,25 @@ class CrudActivity : AppCompatActivity(), CrudProductAdapter.OnProductClickListe
         loadListProductDetails("edit")
     }
 
+    private fun finishViewLayout() {
+        type = "view_list"
+        rootLayout.removeAllViews()
+        viewLayout = LayoutInflater.from(this).inflate(R.layout.list_product_layout, rootLayout, false) as ConstraintLayout
+        rootLayout.addView(viewLayout)
+        loadListProductDetails("view")
+    }
+
     override fun onBackPressed() {
-        if (type == "edit") {
-            finishEditLayout()
-        } else {
-            super.onBackPressed()
+        when (type) {
+            "edit" -> {
+                finishEditLayout()
+            }
+            "view" -> {
+                finishViewLayout()
+            }
+            else -> {
+                super.onBackPressed()
+            }
         }
     }
 }

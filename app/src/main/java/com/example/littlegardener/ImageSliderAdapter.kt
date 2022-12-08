@@ -3,13 +3,12 @@ package com.example.littlegardener
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.smarteist.autoimageslider.SliderViewAdapter
 
-class ImageSliderAdapter(private val imagesList: MutableList<String>): RecyclerView.Adapter<ImageSliderAdapter.ViewImages>() {
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewImages {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.product_image, parent, false)
+class ImageSliderAdapter(private val imagesList: MutableList<String>): SliderViewAdapter<ImageSliderAdapter.ViewImages>() {
+    override fun onCreateViewHolder(parent: ViewGroup?): ViewImages {
+        val view = LayoutInflater.from(parent?.context).inflate(R.layout.product_image, parent, false)
         return ViewImages(view)
     }
 
@@ -18,11 +17,11 @@ class ImageSliderAdapter(private val imagesList: MutableList<String>): RecyclerV
         holder.bind(image)
     }
 
-    override fun getItemCount(): Int {
+    override fun getCount(): Int {
         return imagesList.size
     }
 
-    class ViewImages(itemView: View): RecyclerView.ViewHolder(itemView) {
+    class ViewImages(itemView: View): ViewHolder(itemView) {
         fun bind(image: String) {
             Glide
                 .with(itemView)

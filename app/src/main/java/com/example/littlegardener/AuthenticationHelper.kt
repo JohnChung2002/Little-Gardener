@@ -9,6 +9,10 @@ class AuthenticationHelper {
             return FirebaseAuth.getInstance()
         }
 
+        fun getCurrentUserUid(): String {
+            return getAuth().currentUser?.uid!!
+        }
+
         fun signInEmailPassword(email: String, password: String, listener:(Boolean)->Unit) {
             val auth = getAuth()
             auth.signInWithEmailAndPassword(email, password).addOnCompleteListener {

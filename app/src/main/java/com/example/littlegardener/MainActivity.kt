@@ -94,6 +94,7 @@ class MainActivity : AppCompatActivity(), LoginFragment.OnLoginListener, SignUpF
     override fun onSignUp(email: String, name: String, password: String) {
         AuthenticationHelper.signUpEmailPassword(email, name, password) { result ->
             if (result) {
+                supportFragmentManager.popBackStackImmediate("signUp",0)
                 updateUI()
             } else {
                 Toast.makeText(this, "User already exists", Toast.LENGTH_SHORT).show()

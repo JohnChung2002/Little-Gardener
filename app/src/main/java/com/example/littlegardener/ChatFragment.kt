@@ -7,9 +7,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.gms.auth.api.Auth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.storage.FirebaseStorage
 
 class ChatFragment : Fragment() {
     private lateinit var messageAdapter: MessageAdapter
@@ -33,14 +35,18 @@ class ChatFragment : Fragment() {
     }
 
     private fun realtimeDBListener() {
-        FirestoreHelper.getChatList { chats ->
+        FirestoreHelper.getCurrUserDocument().addSnapshotListener { snapshot, e ->
+            if (e != null) {
+                return@addSnapshotListener
+            }
+            val chats = snapshot?.data?.get("chatList") as ArrayList<String>
             for (chatId in chats) {
                 val ref = RealtimeDBHelper.getChatGroupReferences(chatId)
                 ref.addValueEventListener(object : ValueEventListener {
                     override fun onDataChange(snapshot: DataSnapshot) {
                         chatRecyclerList.clear()
                         for (party in snapshot.children) {
-                            if (party.key != AuthenticationHelper.getAuth().currentUser?.uid) {
+                            if (party.key != AuthenticationHelper.getCurrentUserUid()) {
                                 FirestoreHelper.getAccountName(party.key.toString()) { name ->
                                     chatRecyclerList.add(ChatItem(chatId, name, party.key.toString(), "Image"))
                                     messageAdapter.notifyDataSetChanged()

@@ -16,6 +16,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 
 class LiveChatActivity : AppCompatActivity() {
+    private lateinit var type: String
     private lateinit var chatItem: ChatItem
     private lateinit var toolbar: Toolbar
     private lateinit var chatAdapter: ChatAdapter
@@ -28,12 +29,30 @@ class LiveChatActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_live_chat)
-        intent.getParcelableExtra<ChatItem>("chatItem")?.let {
-            chatItem = it
+        type = intent.getStringExtra("type")!!
+        chatItem = intent.getParcelableExtra("chatItem")!!
+        if (type != "exists") {
+            FirestoreHelper.getAccountName(chatItem.receiver) { name ->
+                chatItem.name = name
+                FirestoreHelper.checkIfChatExists(chatItem.receiver) { chatId ->
+                    if (chatId != "") {
+                        chatItem.id = chatId
+                        type = "exists"
+                    }
+                    initialise()
+                }
+            }
+        } else {
+            initialise()
         }
+    }
+
+    private fun initialise() {
         initUI()
         initListeners()
-        realtimeDBListener()
+        if (type == "exists") {
+            realtimeDBListener()
+        }
     }
 
     private fun initUI() {
@@ -95,8 +114,17 @@ class LiveChatActivity : AppCompatActivity() {
 
     private fun sendMessage() {
         messageEditText.text.toString().let {
-            val message = Message(AuthenticationHelper.getAuth().currentUser?.uid!!,chatItem.receiver,"message", it)
-            RealtimeDBHelper.pushMessage(chatItem.id, message)
+            val message = Message(AuthenticationHelper.getCurrentUserUid(), chatItem.receiver,"message", it)
+            if (type != "exists") {
+                RealtimeDBHelper.createChat(chatItem.receiver) { id ->
+                    chatItem.id = id
+                    type = "exists"
+                    realtimeDBListener()
+                    RealtimeDBHelper.pushMessage(chatItem.id, message)
+                }
+            } else {
+                RealtimeDBHelper.pushMessage(chatItem.id, message)
+            }
             messageEditText.text.clear()
         }
     }

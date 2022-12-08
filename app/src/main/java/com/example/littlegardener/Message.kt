@@ -11,10 +11,10 @@ data class ChatGroup(
 
 @Parcelize
 data class ChatItem(
-    val id: String,
-    val name: String,
-    val receiver: String,
-    val image: String?
+    var id: String = "",
+    var name: String = "",
+    var receiver: String = "",
+    var image: String = ""
 ): Parcelable
 
 data class Message(

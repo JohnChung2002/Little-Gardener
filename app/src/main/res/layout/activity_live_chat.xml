@@ -14,7 +14,6 @@
         android:layout_marginHorizontal="10dp"
         android:layout_marginTop="8dp"
         android:background="@drawable/rounded_white_shape"
-        android:title="Hello"
         android:elevation="2dp"
         android:titleTextColor="@color/black"
         app:layout_constraintEnd_toEndOf="parent"

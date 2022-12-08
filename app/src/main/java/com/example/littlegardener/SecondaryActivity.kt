@@ -106,13 +106,14 @@ class SecondaryActivity : AppCompatActivity(), HomeCategoryAdapter.CategoryListe
 
     override fun onMessageClicked(chatItem: ChatItem) {
         val intent = Intent(this, LiveChatActivity::class.java)
+        intent.putExtra("type", "exists")
         intent.putExtra("chatItem", chatItem)
         startActivity(intent)
     }
 
     override fun onCategoryClicked(category: String) {
         val intent = Intent(this, CrudActivity::class.java)
-        intent.putExtra("type", "view")
+        intent.putExtra("type", "view_list")
         intent.putExtra("category", category)
         startActivity(intent)
     }

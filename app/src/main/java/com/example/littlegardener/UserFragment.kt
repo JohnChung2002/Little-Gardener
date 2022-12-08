@@ -31,7 +31,7 @@ class UserFragment : Fragment() {
 
     private fun initUI(view: View) {
         profileTextView = view.findViewById(R.id.profile_name)
-        FirestoreHelper.getAccountName(AuthenticationHelper.getAuth().currentUser?.uid!!) {
+        FirestoreHelper.getAccountName(AuthenticationHelper.getCurrentUserUid()) {
             profileTextView.text = it
         }
         signOutButton = view.findViewById(R.id.log_out_button)
