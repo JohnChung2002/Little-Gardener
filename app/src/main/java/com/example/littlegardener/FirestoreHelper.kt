@@ -2,10 +2,7 @@ package com.example.littlegardener
 
 import android.content.Context
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.CollectionReference
-import com.google.firebase.firestore.DocumentReference
-import com.google.firebase.firestore.FieldValue
-import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.*
 import kotlinx.coroutines.flow.merge
 import java.time.LocalDateTime
 import java.time.ZoneOffset
@@ -150,7 +147,7 @@ class FirestoreHelper {
                         return@addOnSuccessListener
                     }
                 }
-                db.set(mapOf(product.seller to mapOf(product.id to 1)))
+                db.set(mapOf(product.seller to mapOf(product.id to 1)), SetOptions.merge())
             }
         }
 
@@ -181,6 +178,32 @@ class FirestoreHelper {
                     }
                 }
             }
+        }
+
+        fun completeOrder(seller: String, products: HashMap<Product, Int>, price: Double, listener: (Boolean) -> Unit) {
+            getCurrCartDocument().update(seller, FieldValue.delete())
+            val db = getOrdersCollection()
+            val data: MutableMap<String, Any> = mutableMapOf()
+            val productsData: MutableMap<String, Any> = mutableMapOf()
+            products.forEach { (product, quantity) ->
+                productsData[product.id] = product
+                productsData["quantity"] = quantity
+            }
+            data["seller"] = seller
+            data["buyer"] = AuthenticationHelper.getCurrentUserUid()
+            data["products"] = productsData
+            data["price"] = price
+            data["status"] = "Pending"
+            db.add(data).addOnSuccessListener { ref ->
+                getCurrUserDocument().update("ordersList", FieldValue.arrayUnion(ref.id))
+                listener.invoke(true)
+            }.addOnFailureListener {
+                listener.invoke(false)
+            }
+        }
+
+        fun getOrdersCollection(): CollectionReference {
+            return getDatabase().collection("orders")
         }
 
         fun initNotification(id: String, listener: (Boolean) -> Unit) {

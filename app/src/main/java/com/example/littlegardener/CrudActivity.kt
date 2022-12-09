@@ -302,7 +302,6 @@ class CrudActivity : AppCompatActivity(), CrudProductAdapter.OnProductClickListe
         currProduct = product
         type = "view"
         loadViewProductDetails()
-        println(product.id)
     }
 
     private fun finishEditLayout() {

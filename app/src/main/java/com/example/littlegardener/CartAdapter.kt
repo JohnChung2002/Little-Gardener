@@ -5,16 +5,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
 class CartAdapter(private val cartItems: List<Pair<String, HashMap<String, Int>>>): RecyclerView.Adapter<CartAdapter.ViewCart>() {
-
-    private lateinit var cartItemAdapter: CartItemAdapter
-    private lateinit var cartRecyclerView: RecyclerView
-    private lateinit var totalPriceTextView: TextView
-    private var totalPrice = 0.0
-    private var cartProductItems: MutableList<Pair<String, Int>> = mutableListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewCart {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.cart_item, parent, false)
@@ -23,51 +19,71 @@ class CartAdapter(private val cartItems: List<Pair<String, HashMap<String, Int>>
 
     override fun onBindViewHolder(holder: ViewCart, position: Int) {
         val cartItem = cartItems[position]
-        totalPriceTextView = holder.itemView.findViewById(R.id.cart_total_price)
-        cartRecyclerView = holder.itemView.findViewById(R.id.cart_item_recycler_view)
-        cartRecyclerView.layoutManager = LinearLayoutManager(holder.itemView.context)
-        cartItemAdapter = CartItemAdapter(cartProductItems, cartItem.first)
-        cartRecyclerView.adapter = cartItemAdapter
-        initCartItemListener(position)
-        holder.itemView.findViewById<Button>(R.id.checkout_button).setOnClickListener {
-            println("seller: ${cartItem.first}, cartItem: ${cartItem.second}")
-        }
-        holder.bind(cartItem, totalPrice)
+        holder.bind(cartItem)
     }
 
     override fun getItemCount(): Int {
         return cartItems.size
     }
 
-    private fun initCartItemListener(position: Int) {
-        FirestoreHelper.initCart {
-            val db = FirestoreHelper.getCurrCartDocument()
-            db.addSnapshotListener { snapshot, e ->
-                if (e != null) {
-                    return@addSnapshotListener
+    class ViewCart(itemView: View): RecyclerView.ViewHolder(itemView) {
+        private lateinit var cartItemAdapter: CartItemAdapter
+        private lateinit var cartRecyclerView: RecyclerView
+        private var cartProductItems: MutableList<Pair<String, Int>> = mutableListOf()
+        private var checkOutItems: HashMap<Product, Int> = hashMapOf()
+
+        fun bind(cartItem: Pair<String, HashMap<String, Int>>) {
+            FirestoreHelper.getAccountName(cartItem.first) {
+                itemView.findViewById<TextView>(R.id.cart_seller_name).text = it
+            }
+            var totalPrice = 0.0
+            cartRecyclerView = itemView.findViewById(R.id.cart_item_recycler_view)
+            cartRecyclerView.layoutManager = LinearLayoutManager(itemView.context)
+            cartItemAdapter = CartItemAdapter(cartProductItems, cartItem.first)
+            cartRecyclerView.adapter = cartItemAdapter
+            initCartItemListener(cartItem.first)
+            for (key in cartItem.second.keys) {
+                FirestoreHelper.getProduct(key) { product ->
+                    totalPrice += (product.price * cartItem.second[key]!!)
+                    val total = "Total Price: RM %.2f".format(totalPrice)
+                    itemView.findViewById<TextView>(R.id.cart_total_price).text = total
+                    checkOutItems[product] = cartItem.second[key]!!
                 }
-                if (snapshot != null && snapshot.exists()) {
-                    totalPrice = 0.0
-                    cartProductItems.clear()
-                    val item = ArrayList(snapshot.data!!.values) as ArrayList<HashMap<String, Int>>
-                    for (info in item[position]) {
-                        cartProductItems.add(Pair(info.key, info.value))
-                        FirestoreHelper.getProductPrice(info.key) {
-                            totalPrice += it * info.value
-                            val total = "Total Price: RM %.2f".format(totalPrice)
-                            totalPriceTextView.text = total
+            }
+            itemView.findViewById<Button>(R.id.checkout_button).setOnClickListener {
+                AlertDialog.Builder(itemView.context)
+                    .setTitle("Checkout?")
+                    .setMessage("Are you sure you want to checkout?")
+                    .setPositiveButton("Yes") { _, _ ->
+                        FirestoreHelper.completeOrder(cartItem.first, checkOutItems, totalPrice) {
+                            if (it) {
+                                Toast.makeText(itemView.context, "Order completed!", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    }
+                    .setNegativeButton("No") { _, _ -> }
+                    .show()
+            }
+        }
+
+        private fun initCartItemListener(seller: String) {
+            FirestoreHelper.initCart {
+                val db = FirestoreHelper.getCurrCartDocument()
+                db.addSnapshotListener { snapshot, e ->
+                    if (e != null) {
+                        return@addSnapshotListener
+                    }
+                    if (snapshot != null && snapshot.exists()) {
+                        if (snapshot.data!![seller] != null) {
+                            cartProductItems.clear()
+                            val item = snapshot.data!![seller] as HashMap<String, Int>
+                            for (key in item.keys.toList()) {
+                                cartProductItems.add(Pair(key, item[key]!!))
+                            }
                         }
                     }
                     cartItemAdapter.notifyDataSetChanged()
                 }
-            }
-        }
-    }
-
-    class ViewCart(itemView: View): RecyclerView.ViewHolder(itemView) {
-        fun bind(cartItem: Pair<String, HashMap<String, Int>>, totalPrice: Double) {
-            FirestoreHelper.getAccountName(cartItem.first) {
-                itemView.findViewById<TextView>(R.id.cart_seller_name).text = it
             }
         }
     }
