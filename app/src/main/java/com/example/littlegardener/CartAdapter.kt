@@ -39,7 +39,7 @@ class CartAdapter(private val cartItems: List<Pair<String, HashMap<String, Int>>
             var totalPrice = 0.0
             cartRecyclerView = itemView.findViewById(R.id.cart_item_recycler_view)
             cartRecyclerView.layoutManager = LinearLayoutManager(itemView.context)
-            cartItemAdapter = CartItemAdapter(cartProductItems, cartItem.first)
+            cartItemAdapter = CartItemAdapter(cartProductItems, cartItem.first, "cart")
             cartRecyclerView.adapter = cartItemAdapter
             initCartItemListener(cartItem.first)
             for (key in cartItem.second.keys) {
@@ -50,7 +50,8 @@ class CartAdapter(private val cartItems: List<Pair<String, HashMap<String, Int>>
                     checkOutItems[product] = cartItem.second[key]!!
                 }
             }
-            itemView.findViewById<Button>(R.id.checkout_button).setOnClickListener {
+            checkOutButton = itemView.findViewById(R.id.checkout_button)
+            checkOutButton.setOnClickListener {
                 AlertDialog.Builder(itemView.context)
                     .setTitle("Checkout?")
                     .setMessage("Are you sure you want to checkout?")

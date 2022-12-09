@@ -30,7 +30,7 @@ class UserFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_user, container, false)
         callback = activity as OnUserInteraction
         initUI(view)
-        initClickListeners(view)
+        initClickListeners()
         return view
     }
 
@@ -46,9 +46,15 @@ class UserFragment : Fragment() {
         signOutButton = view.findViewById(R.id.log_out_button)
     }
 
-    private fun initClickListeners(view: View) {
-        viewOrdersButton.setOnClickListener {
-            callback.viewOrders()
+    private fun initClickListeners() {
+        FirestoreHelper.getRole {
+            if (it == "Admin") {
+                viewOrdersButton.visibility = View.GONE
+            } else {
+                viewOrdersButton.setOnClickListener {
+                    callback.viewOrders()
+                }
+            }
         }
         editProfileButton.setOnClickListener {
             callback.editProfile("edit_profile")

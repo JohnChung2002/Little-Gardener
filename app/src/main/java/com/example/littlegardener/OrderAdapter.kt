@@ -10,7 +10,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
-class OrderAdapter(private val orderItems: List<Pair<String, Pair<String, HashMap<String, Int>>>>): RecyclerView.Adapter<OrderAdapter.ViewOrder>() {
+class OrderAdapter(private val orderItems: List<Pair<String, Pair<String, HashMap<String, Int>>>>, private val viewType: String): RecyclerView.Adapter<OrderAdapter.ViewOrder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewOrder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.cart_item, parent, false)
         return ViewOrder(view)
@@ -18,7 +18,18 @@ class OrderAdapter(private val orderItems: List<Pair<String, Pair<String, HashMa
 
     override fun onBindViewHolder(holder: ViewOrder, position: Int) {
         val orderItem = orderItems[position]
-        holder.bind(orderItem)
+        holder.itemView.setOnLongClickListener {
+            AlertDialog.Builder(holder.itemView.context)
+                .setTitle("Cancel order?")
+                .setMessage("Are you sure you want to cancel this order?")
+                .setPositiveButton("Yes") { _, _ ->
+                    FirestoreHelper.updateOrderStatus(orderItem.first, "Cancelled")
+                }
+                .setNegativeButton("No") { _, _ -> }
+                .show()
+            true
+        }
+        holder.bind(orderItem, viewType)
     }
 
     override fun getItemCount(): Int {
@@ -30,17 +41,21 @@ class OrderAdapter(private val orderItems: List<Pair<String, Pair<String, HashMa
         private lateinit var cartRecyclerView: RecyclerView
         private var cartProductItems: MutableList<Pair<String, Int>> = mutableListOf()
         private var checkOutItems: HashMap<Product, Int> = hashMapOf()
+        private lateinit var checkOutButton: Button
+        private lateinit var orderType: String
+        private lateinit var orderId: String
 
-        fun bind(orderItem: Pair<String, Pair<String, HashMap<String, Int>>>) {
+        fun bind(orderItem: Pair<String, Pair<String, HashMap<String, Int>>>, viewType: String) {
             FirestoreHelper.getAccountInfo(orderItem.second.first) { name, _ ->
                 itemView.findViewById<TextView>(R.id.cart_seller_name).text = name
             }
+            orderId = orderItem.first
             var totalPrice = 0.0
             cartRecyclerView = itemView.findViewById(R.id.cart_item_recycler_view)
             cartRecyclerView.layoutManager = LinearLayoutManager(itemView.context)
-            cartItemAdapter = CartItemAdapter(cartProductItems, orderItem.second.first)
+            cartItemAdapter = CartItemAdapter(cartProductItems, orderItem.second.first, "order")
             cartRecyclerView.adapter = cartItemAdapter
-            initOrderItemListener(orderItem.first)
+            initOrderItemListener(orderId)
             for (key in orderItem.second.second.keys) {
                 FirestoreHelper.getProduct(key) { product ->
                     totalPrice += (product.price * orderItem.second.second[key]!!)
@@ -49,30 +64,83 @@ class OrderAdapter(private val orderItems: List<Pair<String, Pair<String, HashMa
                     checkOutItems[product] = orderItem.second.second[key]!!
                 }
             }
-            itemView.findViewById<Button>(R.id.checkout_button).setOnClickListener {
+            checkOutButton = itemView.findViewById(R.id.checkout_button)
+            if (viewType == "view_orders") {
+                checkOutButton.visibility = View.GONE
+            }
+        }
+
+        private fun prepareOrder() {
+            checkOutButton.setOnClickListener {
                 AlertDialog.Builder(itemView.context)
                     .setTitle("Checkout?")
-                    .setMessage("Are you sure you want to checkout?")
+                    .setMessage("Are you sure you want to prepare?")
                     .setPositiveButton("Yes") { _, _ ->
-                        println("Test")
+                        FirestoreHelper.updateOrderStatus(orderId, orderType)
                     }
                     .setNegativeButton("No") { _, _ -> }
                     .show()
             }
         }
 
+        private fun readyOrder() {
+            checkOutButton.setOnClickListener {
+                AlertDialog.Builder(itemView.context)
+                    .setTitle("Checkout?")
+                    .setMessage("Are you sure you want to ready?")
+                    .setPositiveButton("Yes") { _, _ ->
+                        FirestoreHelper.updateOrderStatus(orderId, orderType)
+                    }
+                    .setNegativeButton("No") { _, _ -> }
+                    .show()
+            }
+        }
+
+        private fun completeOrder() {
+            checkOutButton.setOnClickListener {
+                AlertDialog.Builder(itemView.context)
+                    .setTitle("Checkout?")
+                    .setMessage("Are you sure you want to complete?")
+                    .setPositiveButton("Yes") { _, _ ->
+                        FirestoreHelper.updateOrderStatus(orderId, orderType)
+                    }
+                    .setNegativeButton("No") { _, _ -> }
+                    .show()
+            }
+        }
+
+        private fun updateCheckoutButton() {
+            val filters = itemView.context.resources.getStringArray(R.array.order_filter)
+            checkOutButton.text = filters[(filters.indexOf(orderType) + 1) % filters.size]
+            when (orderType) {
+                "Pending" -> { prepareOrder() }
+                "Preparing" -> { readyOrder() }
+                "Ready For Pickup" -> { completeOrder() }
+            }
+        }
+
         private fun initOrderItemListener(order: String) {
-            val db = FirestoreHelper.getOrdersCollection().document("order")
+            val db = FirestoreHelper.getOrdersCollection().document(order)
             db.addSnapshotListener { snapshot, e ->
                 if (e != null) {
-                    Toast.makeText(itemView.context, "Failed to load order", Toast.LENGTH_SHORT).show()
                     return@addSnapshotListener
                 }
                 if (snapshot != null && snapshot.exists()) {
-                    val orderItems = snapshot.data!![order] as HashMap<String, HashMap<String, Int>>
                     cartProductItems.clear()
-                    for (key in orderItems.keys) {
-                        cartProductItems.add(Pair(key, orderItems[key]!!["quantity"]!!))
+                    val orderItems = snapshot.data!! as HashMap<String, Any>
+                    orderType = orderItems["status"] as String
+                    updateCheckoutButton()
+                    for (product in orderItems["products"] as HashMap<String, Any>) {
+                        var itemId = ""
+                        var quantity: Long = 0
+                        for (info in product.value as HashMap<String, Any>) {
+                            if (info.key == "id") {
+                                itemId = info.value as String
+                            } else if (info.key == "quantity") {
+                                quantity = info.value as Long
+                            }
+                        }
+                        cartProductItems.add(Pair(itemId, quantity.toInt()))
                     }
                     cartItemAdapter.notifyDataSetChanged()
                 }

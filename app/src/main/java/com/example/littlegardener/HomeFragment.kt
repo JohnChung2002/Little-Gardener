@@ -86,6 +86,18 @@ class HomeFragment : Fragment() {
             intent.putExtra("type", "delete_list")
             startActivity(intent)
         }
+        val manageSelfOrder = view.findViewById<TextView>(R.id.manage_self_orders)
+        manageSelfOrder.setOnClickListener {
+            val intent = Intent(context, ManageOrdersActivity::class.java)
+            intent.putExtra("type", "self_manage_orders")
+            startActivity(intent)
+        }
+        val manageAllOrder = view.findViewById<TextView>(R.id.manage_all_orders)
+        manageAllOrder.setOnClickListener {
+            val intent = Intent(context, ManageOrdersActivity::class.java)
+            intent.putExtra("type", "all_manage_orders")
+            startActivity(intent)
+        }
     }
 
     private fun loadUserOptions(view: View) {

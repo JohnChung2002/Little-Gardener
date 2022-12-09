@@ -200,6 +200,10 @@ class FirestoreHelper {
             return getDatabase().collection("orders")
         }
 
+        fun updateOrderStatus(orderId: String, status: String) {
+            getOrdersCollection().document(orderId).update("status", status)
+        }
+
         fun initNotification(id: String, listener: (Boolean) -> Unit) {
             val db = getNotificationCollection().document(id)
             db.get().addOnSuccessListener {

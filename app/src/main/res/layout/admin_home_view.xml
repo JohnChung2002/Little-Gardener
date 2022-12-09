@@ -59,7 +59,7 @@
         android:textAlignment="textEnd" />
 
     <TextView
-        android:id="@+id/manage_orders"
+        android:id="@+id/manage_self_orders"
         android:layout_width="0dp"
         android:layout_columnWeight="1"
         android:layout_height="wrap_content"
@@ -69,7 +69,23 @@
         android:paddingEnd="10dp"
         android:paddingBottom="10dp"
         android:layout_margin="8dp"
-        android:text="Manage Customer Orders"
+        android:text="Manage Customer Orders (Self)"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:textAlignment="textEnd" />
+
+    <TextView
+        android:id="@+id/manage_all_orders"
+        android:layout_width="0dp"
+        android:layout_columnWeight="1"
+        android:layout_height="wrap_content"
+        android:background="@drawable/rounded_shape"
+        android:paddingStart="40dp"
+        android:paddingTop="40dp"
+        android:paddingEnd="10dp"
+        android:paddingBottom="10dp"
+        android:layout_margin="8dp"
+        android:text="Manage Customer Orders (All)"
         android:textStyle="bold"
         android:textSize="16sp"
         android:textAlignment="textEnd" />
