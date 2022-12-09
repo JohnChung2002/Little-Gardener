@@ -5,4 +5,11 @@
     <string name="facebook_client_token">ecd50350068ddb66bda98fbc492a9dac</string>
     <string name="firebase_storage_url">https://firebasestorage.googleapis.com/v0/b/little-gardener-c22ec.appspot.com/</string>
     <string name="time_zone">+08:00</string>
+    <string-array name="order_filter">
+        <item>Pending</item>
+        <item>Preparing</item>
+        <item>Ready For Pickup</item>
+        <item>Completed</item>
+        <item>Cancelled</item>
+    </string-array>
 </resources>

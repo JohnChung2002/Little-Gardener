@@ -47,8 +47,8 @@ class ChatFragment : Fragment() {
                         chatRecyclerList.clear()
                         for (party in snapshot.children) {
                             if (party.key != AuthenticationHelper.getCurrentUserUid()) {
-                                FirestoreHelper.getAccountName(party.key.toString()) { name ->
-                                    chatRecyclerList.add(ChatItem(chatId, name, party.key.toString(), "Image"))
+                                FirestoreHelper.getAccountInfo(party.key.toString()) { name, image ->
+                                    chatRecyclerList.add(ChatItem(chatId, name, party.key.toString(), image))
                                     messageAdapter.notifyDataSetChanged()
                                 }
                             }

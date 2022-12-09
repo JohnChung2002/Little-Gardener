@@ -67,7 +67,6 @@ class SignUpFragment : Fragment() {
     private fun matchPasswords(password1: String, password2: String): Boolean {
         var valid = (password1 == password2)
         if (!valid) {
-            password1EditText.error = "Password does not match!"
             password2EditText.error = "Password does not match!"
         } else  {
             valid = validatePassword(password1)

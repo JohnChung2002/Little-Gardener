@@ -32,8 +32,9 @@ class LiveChatActivity : AppCompatActivity() {
         type = intent.getStringExtra("type")!!
         chatItem = intent.getParcelableExtra("chatItem")!!
         if (type != "exists") {
-            FirestoreHelper.getAccountName(chatItem.receiver) { name ->
+            FirestoreHelper.getAccountInfo(chatItem.receiver) { name, image ->
                 chatItem.name = name
+                println(image)
                 FirestoreHelper.checkIfChatExists(chatItem.receiver) { chatId ->
                     if (chatId != "") {
                         chatItem.id = chatId

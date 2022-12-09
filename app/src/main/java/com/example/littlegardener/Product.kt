@@ -12,6 +12,7 @@ data class Product(
     var category: String = "",
     var images: List<String> = listOf(),
     var seller: String = "",
+    var quantity: Int = 0
 ): Parcelable
 
 @Parcelize

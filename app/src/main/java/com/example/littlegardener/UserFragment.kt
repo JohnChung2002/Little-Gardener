@@ -12,10 +12,15 @@ import kotlin.math.sign
 
 class UserFragment : Fragment() {
     interface OnUserInteraction {
+        fun viewOrders()
+        fun editProfile(type: String)
         fun signOut()
     }
     private lateinit var callback: OnUserInteraction
     private lateinit var profileTextView: TextView
+    private lateinit var viewOrdersButton: Button
+    private lateinit var editProfileButton: Button
+    private lateinit var changePasswordButton: Button
     private lateinit var signOutButton: Button
 
     override fun onCreateView(
@@ -31,13 +36,26 @@ class UserFragment : Fragment() {
 
     private fun initUI(view: View) {
         profileTextView = view.findViewById(R.id.profile_name)
-        FirestoreHelper.getAccountName(AuthenticationHelper.getCurrentUserUid()) {
-            profileTextView.text = it
+        FirestoreHelper.getAccountInfo(AuthenticationHelper.getCurrentUserUid()) { name, image ->
+            profileTextView.text = name
+            println(image)
         }
+        viewOrdersButton = view.findViewById(R.id.view_orders_button)
+        editProfileButton = view.findViewById(R.id.edit_profile_button)
+        changePasswordButton = view.findViewById(R.id.change_password_button)
         signOutButton = view.findViewById(R.id.log_out_button)
     }
 
     private fun initClickListeners(view: View) {
+        viewOrdersButton.setOnClickListener {
+            callback.viewOrders()
+        }
+        editProfileButton.setOnClickListener {
+            callback.editProfile("edit_profile")
+        }
+        changePasswordButton.setOnClickListener {
+            callback.editProfile("change_password")
+        }
         signOutButton.setOnClickListener {
             callback.signOut()
         }

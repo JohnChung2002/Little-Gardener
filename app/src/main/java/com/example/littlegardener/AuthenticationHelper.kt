@@ -58,6 +58,28 @@ class AuthenticationHelper {
             }
         }
 
+        fun validateCurrentPassword(currentPassword: String, listener:(Boolean)->Unit) {
+            val auth = getAuth()
+            auth.signInWithEmailAndPassword(getAuth().currentUser?.email!!, currentPassword).addOnCompleteListener {
+                if (it.isSuccessful) {
+                    listener.invoke(true)
+                } else {
+                    listener.invoke(false)
+                }
+            }
+        }
+
+        fun changePassword(newPassword: String, listener:(Boolean)->Unit) {
+            val auth = getAuth()
+            auth.currentUser?.updatePassword(newPassword)?.addOnCompleteListener {
+                if (it.isSuccessful) {
+                    listener.invoke(true)
+                } else {
+                    listener.invoke(false)
+                }
+            }
+        }
+
         fun signOut() {
             val auth = getAuth()
             auth.signOut()

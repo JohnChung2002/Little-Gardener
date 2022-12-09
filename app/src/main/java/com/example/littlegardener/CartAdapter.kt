@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
 class CartAdapter(private val cartItems: List<Pair<String, HashMap<String, Int>>>): RecyclerView.Adapter<CartAdapter.ViewCart>() {
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewCart {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.cart_item, parent, false)
         return ViewCart(view)
@@ -31,10 +30,11 @@ class CartAdapter(private val cartItems: List<Pair<String, HashMap<String, Int>>
         private lateinit var cartRecyclerView: RecyclerView
         private var cartProductItems: MutableList<Pair<String, Int>> = mutableListOf()
         private var checkOutItems: HashMap<Product, Int> = hashMapOf()
+        private lateinit var checkOutButton: Button
 
         fun bind(cartItem: Pair<String, HashMap<String, Int>>) {
-            FirestoreHelper.getAccountName(cartItem.first) {
-                itemView.findViewById<TextView>(R.id.cart_seller_name).text = it
+            FirestoreHelper.getAccountInfo(cartItem.first) { name, _ ->
+                itemView.findViewById<TextView>(R.id.cart_seller_name).text = name
             }
             var totalPrice = 0.0
             cartRecyclerView = itemView.findViewById(R.id.cart_item_recycler_view)
@@ -57,7 +57,11 @@ class CartAdapter(private val cartItems: List<Pair<String, HashMap<String, Int>>
                     .setPositiveButton("Yes") { _, _ ->
                         FirestoreHelper.completeOrder(cartItem.first, checkOutItems, totalPrice) {
                             if (it) {
-                                Toast.makeText(itemView.context, "Order completed!", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(
+                                    itemView.context,
+                                    "Order completed!",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             }
                         }
                     }

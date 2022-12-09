@@ -28,15 +28,16 @@ class FirestoreHelper {
                 "name" to name,
                 "role" to "User",
                 "chatList" to listOf<String>(),
-                "ordersList" to listOf<String>()
+                "ordersList" to listOf<String>(),
+                "image" to ""
             )
             db.set(data)
         }
 
-        fun getAccountName(id: String, listener: (String) -> Unit) {
+        fun getAccountInfo(id: String, listener: (String, String) -> Unit) {
             val db = getDatabase()
             db.collection("users").document(id).get().addOnSuccessListener {
-                listener.invoke(it.get("name").toString())
+                listener.invoke(it.get("name").toString(), it.get("image").toString())
             }
         }
 
@@ -99,13 +100,6 @@ class FirestoreHelper {
                 listener.invoke(product)
             }.addOnFailureListener {
                 listener.invoke(Product())
-            }
-        }
-
-        fun getProductPrice(id: String, listener: (Double) -> Unit) {
-            val db = getProductCollection()
-            db.document(id).get().addOnSuccessListener {
-                listener.invoke(it.get("price").toString().toDouble())
             }
         }
 
@@ -186,8 +180,8 @@ class FirestoreHelper {
             val data: MutableMap<String, Any> = mutableMapOf()
             val productsData: MutableMap<String, Any> = mutableMapOf()
             products.forEach { (product, quantity) ->
+                product.quantity = quantity
                 productsData[product.id] = product
-                productsData["quantity"] = quantity
             }
             data["seller"] = seller
             data["buyer"] = AuthenticationHelper.getCurrentUserUid()

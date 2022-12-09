@@ -98,6 +98,18 @@ class SecondaryActivity : AppCompatActivity(), HomeCategoryAdapter.CategoryListe
         finishAffinity()
     }
 
+    override fun viewOrders() {
+        val intent = Intent(this, ManageOrdersActivity::class.java)
+        intent.putExtra("type", "view_orders")
+        startActivity(intent)
+    }
+
+    override fun editProfile(type: String) {
+        val intent = Intent(this, EditProfileActivity::class.java)
+        intent.putExtra("type", type)
+        startActivity(intent)
+    }
+
     override fun signOut() {
         AuthenticationHelper.signOut()
         setResult(RESULT_OK)
