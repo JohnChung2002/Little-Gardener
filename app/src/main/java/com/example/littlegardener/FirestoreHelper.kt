@@ -1,9 +1,8 @@
 package com.example.littlegardener
 
 import android.content.Context
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
-import kotlinx.coroutines.flow.merge
+import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
@@ -85,21 +84,53 @@ class FirestoreHelper {
             }
         }
 
-        fun getProduct(id: String, listener: (Product) -> Unit) {
+        fun getOrderProduct(orderId: String, id: String, listener: (Product) -> Unit) {
+            val db = getOrdersCollection().document(orderId)
+            db.get().addOnSuccessListener {
+                try {
+                    val info = it.data as HashMap<String, Any>
+                    val productMap = info["products"] as HashMap<String, Any>
+                    println("------------------------")
+                    println("orderId: $orderId")
+                    println("id = $id")
+                    println("++++++++++++++++++++++++")
+                    val product = productMap[id] as HashMap<String, Any>
+                    val returnProduct = Product(
+                        id,
+                        product["name"].toString(),
+                        product["price"].toString().toDouble(),
+                        product["description"].toString(),
+                        product["category"].toString(),
+                        product["images"] as List<String>,
+                        product["seller"].toString(),
+                        product["quantity"].toString().toInt()
+                    )
+                    listener.invoke(returnProduct)
+                } catch(e: Exception) {
+                    listener.invoke(Product())
+                }
+
+            }
+        }
+
+        fun getCartProduct(seller: String, id: String, listener: (Product) -> Unit) {
             val db = getProductCollection()
             db.document(id).get().addOnSuccessListener {
-                val product = Product(
-                    id = it.id,
-                    name = it.get("name").toString(),
-                    description = it.get("description").toString(),
-                    price = it.get("price").toString().toDouble(),
-                    category = it.get("category").toString(),
-                    images = it.get("images") as List<String>,
-                    seller = it.get("seller").toString()
-                )
-                listener.invoke(product)
-            }.addOnFailureListener {
-                listener.invoke(Product())
+                if (it.data != null) {
+                    val product = Product(
+                        id = it.id,
+                        name = it.get("name").toString(),
+                        description = it.get("description").toString(),
+                        price = it.get("price").toString().toDouble(),
+                        category = it.get("category").toString(),
+                        images = it.get("images") as List<String>,
+                        seller = it.get("seller").toString()
+                    )
+                    listener.invoke(product)
+                } else {
+                    removeProductFromCart(Product(id = id, seller = seller))
+                    listener.invoke(Product())
+                }
             }
         }
 
@@ -174,25 +205,46 @@ class FirestoreHelper {
             }
         }
 
-        fun completeOrder(seller: String, products: HashMap<Product, Int>, price: Double, listener: (Boolean) -> Unit) {
-            getCurrCartDocument().update(seller, FieldValue.delete())
-            val db = getOrdersCollection()
+        fun completeOrder(seller: String, listener: (Boolean) -> Unit) {
+            var itemCount: Int
+            var count = 0
+            var totalPrice = 0.0
             val data: MutableMap<String, Any> = mutableMapOf()
             val productsData: MutableMap<String, Any> = mutableMapOf()
-            products.forEach { (product, quantity) ->
-                product.quantity = quantity
-                productsData[product.id] = product
-            }
             data["seller"] = seller
             data["buyer"] = AuthenticationHelper.getCurrentUserUid()
-            data["products"] = productsData
-            data["price"] = price
             data["status"] = "Pending"
-            db.add(data).addOnSuccessListener { ref ->
-                getCurrUserDocument().update("ordersList", FieldValue.arrayUnion(ref.id))
-                listener.invoke(true)
-            }.addOnFailureListener {
-                listener.invoke(false)
+            getCurrCartDocument().get().addOnSuccessListener { snapshot ->
+                if (snapshot.exists()) {
+                    if (snapshot.get(seller) != null) {
+                        val snapshotData = snapshot.get(seller) as Map<String, Int>
+                        itemCount = snapshotData.size
+                        for (product in snapshotData) {
+                            getCartProduct(seller, product.key) { cartProduct ->
+                                if (cartProduct.id != "") {
+                                    totalPrice += cartProduct.price * product.value
+                                    cartProduct.quantity = product.value
+                                    productsData[product.key] = cartProduct
+                                    count++
+                                } else {
+                                    itemCount--
+                                }
+                                if (itemCount == count) {
+                                    data["products"] = productsData
+                                    data["price"] = totalPrice
+                                    getCurrCartDocument().update(seller, FieldValue.delete())
+                                    getOrdersCollection().add(data).addOnSuccessListener { ref ->
+                                        getCurrUserDocument().update("ordersList", FieldValue.arrayUnion(ref.id))
+                                        addNotification(seller, Notification(title = "New Order", description = "You have a new order. Please check the manage product list", timestamp = getCurrTimestamp()))
+                                        listener.invoke(true)
+                                    }.addOnFailureListener {
+                                        listener.invoke(false)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
 
@@ -200,8 +252,9 @@ class FirestoreHelper {
             return getDatabase().collection("orders")
         }
 
-        fun updateOrderStatus(orderId: String, status: String) {
+        fun updateOrderStatus(buyerId: String, orderId: String, status: String) {
             getOrdersCollection().document(orderId).update("status", status)
+            addNotification(buyerId, Notification(title = "Order is $status", description = "Your order status has been changed to $status. Please check your order list.", timestamp = getCurrTimestamp()))
         }
 
         fun initNotification(id: String, listener: (Boolean) -> Unit) {
@@ -221,7 +274,7 @@ class FirestoreHelper {
             return getDatabase().collection("notifications")
         }
 
-        fun addNotification(id: String, notification: Notification) {
+        private fun addNotification(id: String, notification: Notification) {
             val db = getNotificationCollection()
             db.document(id).get().addOnSuccessListener {
                 if (it.exists()) {
@@ -288,6 +341,13 @@ class FirestoreHelper {
                 }
 
             }
+        }
+
+        private fun getCurrTimestamp(): String {
+            return DateTimeFormatter
+                .ofPattern("yyyy-MM-dd HH:mm:ss")
+                .withZone(ZoneOffset.UTC)
+                .format(Instant.now())
         }
 
         fun getTimeInTimeZone(context: Context, time: String): String {

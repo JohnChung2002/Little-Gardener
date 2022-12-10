@@ -71,7 +71,6 @@ class LiveChatActivity : AppCompatActivity() {
     private fun initListeners() {
         addMessageImageView.setOnClickListener {
             val intent = Intent(Intent.ACTION_PICK)
-            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
             intent.type = "image/*"
             attachImage.launch(intent)
         }
@@ -108,6 +107,19 @@ class LiveChatActivity : AppCompatActivity() {
     private val attachImage = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == RESULT_OK) {
             result.data?.data?.let { uri ->
+                StorageHelper.uploadImage(this, uri) {
+                    val message = Message(AuthenticationHelper.getCurrentUserUid(), chatItem.receiver,"image", it)
+                    if (type != "exists") {
+                        RealtimeDBHelper.createChat(chatItem.receiver) { id ->
+                            chatItem.id = id
+                            type = "exists"
+                            realtimeDBListener()
+                            RealtimeDBHelper.pushMessage(chatItem.id, chatItem.receiver, message)
+                        }
+                    } else {
+                        RealtimeDBHelper.pushMessage(chatItem.id, chatItem.receiver, message)
+                    }
+                }
                 Toast.makeText(this, uri.toString(), Toast.LENGTH_SHORT).show()
             }
         }
@@ -121,10 +133,10 @@ class LiveChatActivity : AppCompatActivity() {
                     chatItem.id = id
                     type = "exists"
                     realtimeDBListener()
-                    RealtimeDBHelper.pushMessage(chatItem.id, message)
+                    RealtimeDBHelper.pushMessage(chatItem.id, chatItem.receiver, message)
                 }
             } else {
-                RealtimeDBHelper.pushMessage(chatItem.id, message)
+                RealtimeDBHelper.pushMessage(chatItem.id, chatItem.receiver, message)
             }
             messageEditText.text.clear()
         }

@@ -40,6 +40,7 @@ class MessageAdapter(private val chatList: List<ChatItem>): RecyclerView.Adapter
     class ViewMessage(itemView: View): RecyclerView.ViewHolder(itemView) {
         fun bind(chatItem: ChatItem) {
             itemView.findViewById<TextView>(R.id.user_name).text = chatItem.name
+            //image
         }
     }
 }

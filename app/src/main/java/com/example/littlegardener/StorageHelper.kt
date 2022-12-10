@@ -6,8 +6,24 @@ import com.google.firebase.storage.FirebaseStorage
 
 class StorageHelper {
     companion object {
-        fun getStorage(): FirebaseStorage {
+        private fun getStorage(): FirebaseStorage {
             return FirebaseStorage.getInstance()
+        }
+
+        fun uploadImage(context: Context, uri: Uri, listener: (String) -> Unit) {
+            val storage = getStorage()
+            if (uri.toString()
+                    .contains(context.resources.getString(R.string.firebase_storage_url))
+            ) {
+                listener.invoke(uri.toString())
+            } else {
+                val ref = storage.reference.child("images/${uri.lastPathSegment}")
+                ref.putFile(uri).addOnSuccessListener {
+                    ref.downloadUrl.addOnSuccessListener {
+                        listener.invoke(it.toString())
+                    }
+                }
+            }
         }
 
         fun uploadImages(context: Context, uriList: List<Uri>, listener: (List<String>) -> Unit) {

@@ -7,7 +7,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
 
-class CartItemAdapter(private val cartItems: List<Pair<String, Int>>, private val seller: String, private val type: String): RecyclerView.Adapter<CartItemAdapter.ViewCartItem>() {
+class CartItemAdapter(private val cartItems: List<Pair<String, Int>>, private val id: String, private val type: String): RecyclerView.Adapter<CartItemAdapter.ViewCartItem>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewCartItem {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.cart_product_item, parent, false)
         return ViewCartItem(view)
@@ -21,14 +21,14 @@ class CartItemAdapter(private val cartItems: List<Pair<String, Int>>, private va
                     .setTitle("Remove item from cart?")
                     .setMessage("Are you sure you want to remove this item from your cart?")
                     .setPositiveButton("Yes") { _, _ ->
-                        FirestoreHelper.removeProductFromCart(Product(id = cartItem.first, seller = seller))
+                        FirestoreHelper.removeProductFromCart(Product(id = cartItem.first, seller = id))
                     }
                     .setNegativeButton("No") { _, _ -> }
                     .show()
                 true
             }
         }
-        holder.bind(cartItem, seller)
+        holder.bind(cartItem, id, type)
     }
 
     override fun getItemCount(): Int {
@@ -36,14 +36,22 @@ class CartItemAdapter(private val cartItems: List<Pair<String, Int>>, private va
     }
 
     class ViewCartItem(itemView: View): RecyclerView.ViewHolder(itemView) {
-        fun bind(cartItem: Pair<String, Int>, seller: String) {
-            FirestoreHelper.getProduct(cartItem.first) {
-                if (it.id != "") {
-                    itemView.findViewById<TextView>(R.id.product_name).text = it.name
-                    val quantity = "Qty: ${cartItem.second}"
-                    itemView.findViewById<TextView>(R.id.product_quantity).text = quantity
-                } else {
-                    FirestoreHelper.removeProductFromCart(Product(id = cartItem.first, seller = seller))
+        fun bind(cartItem: Pair<String, Int>, id: String, type: String) {
+            if (type == "cart") {
+                FirestoreHelper.getCartProduct(id, cartItem.first) { product ->
+                    if (product.id != "") {
+                        itemView.findViewById<TextView>(R.id.product_name).text = product.name
+                        val quantity = "Qty: ${cartItem.second}"
+                        itemView.findViewById<TextView>(R.id.product_quantity).text = quantity
+                    }
+                }
+            } else {
+                FirestoreHelper.getOrderProduct(id, cartItem.first) { product ->
+                    if (product.id != "") {
+                        itemView.findViewById<TextView>(R.id.product_name).text = product.name
+                        val quantity = "Qty: ${cartItem.second}"
+                        itemView.findViewById<TextView>(R.id.product_quantity).text = quantity
+                    }
                 }
             }
         }

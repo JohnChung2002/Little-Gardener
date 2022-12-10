@@ -43,24 +43,27 @@ class CartAdapter(private val cartItems: List<Pair<String, HashMap<String, Int>>
             cartRecyclerView.adapter = cartItemAdapter
             initCartItemListener(cartItem.first)
             for (key in cartItem.second.keys) {
-                FirestoreHelper.getProduct(key) { product ->
-                    totalPrice += (product.price * cartItem.second[key]!!)
-                    val total = "Total Price: RM %.2f".format(totalPrice)
-                    itemView.findViewById<TextView>(R.id.cart_total_price).text = total
-                    checkOutItems[product] = cartItem.second[key]!!
+                FirestoreHelper.getCartProduct(cartItem.first, key) { product ->
+                    if (product.id != "") {
+                        totalPrice += (product.price * cartItem.second[key]!!)
+                        val total = "Total Price: RM %.2f".format(totalPrice)
+                        itemView.findViewById<TextView>(R.id.cart_total_price).text = total
+                        checkOutItems[product] = cartItem.second[key]!!
+                    }
                 }
             }
             checkOutButton = itemView.findViewById(R.id.checkout_button)
+            checkOutButton.visibility = View.VISIBLE
             checkOutButton.setOnClickListener {
                 AlertDialog.Builder(itemView.context)
                     .setTitle("Checkout?")
                     .setMessage("Are you sure you want to checkout?")
                     .setPositiveButton("Yes") { _, _ ->
-                        FirestoreHelper.completeOrder(cartItem.first, checkOutItems, totalPrice) {
+                        FirestoreHelper.completeOrder(cartItem.first) {
                             if (it) {
                                 Toast.makeText(
                                     itemView.context,
-                                    "Order completed!",
+                                    "Order placed!",
                                     Toast.LENGTH_SHORT
                                 ).show()
                             }

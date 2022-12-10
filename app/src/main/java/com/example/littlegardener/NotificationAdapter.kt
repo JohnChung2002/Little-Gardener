@@ -25,7 +25,7 @@ class NotificationAdapter(private val notificationList: List<Notification>): Rec
         fun bind(notification: Notification) {
             itemView.findViewById<TextView>(R.id.notification_title).text = notification.title
             itemView.findViewById<TextView>(R.id.notification_description).text = notification.description
-            itemView.findViewById<TextView>(R.id.notification_timestamp).text = notification.timestamp
+            itemView.findViewById<TextView>(R.id.notification_timestamp).text = FirestoreHelper.getTimeInTimeZone(itemView.context, notification.timestamp)
         }
     }
 }

@@ -40,8 +40,9 @@ class NotificationFragment : Fragment() {
                 notificationRecyclerList.clear()
                 for (i in notifications.indices) {
                     notifications[i].let {
-                        notificationRecyclerList.add(Notification(i, it["title"]!!, it["description"]!!, it["timestamp"]!!))
+                        notificationRecyclerList.add(Notification(it["title"]!!, it["description"]!!, it["timestamp"]!!))
                     }
+                    notificationRecyclerList.sortByDescending { it.timestamp }
                     notificationAdapter.notifyDataSetChanged()
                 }
             }

@@ -14,7 +14,7 @@ class ManageOrdersActivity : AppCompatActivity() {
     private lateinit var snapshotListener: ListenerRegistration
     private lateinit var orderAdapter: OrderAdapter
     private lateinit var filterSpinner: Spinner
-    private var orderList: MutableList<Pair<String, Pair<String, HashMap<String, Int>>>> = mutableListOf()
+    private var orderList: MutableList<Pair<String, Pair<Pair<String, String>, HashMap<String, Int>>>> = mutableListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,14 +62,14 @@ class ManageOrdersActivity : AppCompatActivity() {
             if (snapshot != null) {
                 orderList.clear()
                 for (document in snapshot.documents) {
-                    var seller = ""
+                    val buyer = document.data!!["buyer"] as String
+                    val seller = document.data!!["seller"] as String
                     val items: HashMap<String, Int> = hashMapOf()
                     for (product in document.data!!["products"] as HashMap<String, Any>) {
                         val prod = product.value as HashMap<String, Any>
                         items[prod["id"] as String] = (prod["quantity"] as Long).toInt()
-                        seller = prod["seller"] as String
                     }
-                    orderList.add(Pair(document.id, Pair(seller, items)))
+                    orderList.add(Pair(document.id, Pair(Pair(buyer, seller), items)))
                 }
             }
             orderAdapter.notifyDataSetChanged()
@@ -85,14 +85,14 @@ class ManageOrdersActivity : AppCompatActivity() {
             if (snapshot != null) {
                 orderList.clear()
                 for (document in snapshot.documents) {
-                    var seller = ""
+                    val buyer = document.data!!["buyer"] as String
+                    val seller = document.data!!["seller"] as String
                     val items: HashMap<String, Int> = hashMapOf()
                     for (product in document.data!!["products"] as HashMap<String, Any>) {
                         val prod = product.value as HashMap<String, Any>
                         items[prod["id"] as String] = (prod["quantity"] as Long).toInt()
-                        seller = prod["seller"] as String
                     }
-                    orderList.add(Pair(document.id, Pair(seller, items)))
+                    orderList.add(Pair(document.id, Pair(Pair(buyer, seller), items)))
                 }
             }
             orderAdapter.notifyDataSetChanged()
@@ -107,14 +107,14 @@ class ManageOrdersActivity : AppCompatActivity() {
             if (snapshot != null) {
                 orderList.clear()
                 for (document in snapshot.documents) {
-                    var seller = ""
+                    val buyer = document.data!!["buyer"] as String
+                    val seller = document.data!!["seller"] as String
                     val items: HashMap<String, Int> = hashMapOf()
                     for (product in document.data!!["products"] as HashMap<String, Any>) {
                         val prod = product.value as HashMap<String, Any>
                         items[prod["id"] as String] = (prod["quantity"] as Long).toInt()
-                        seller = prod["seller"] as String
                     }
-                    orderList.add(Pair(document.id, Pair(seller, items)))
+                    orderList.add(Pair(document.id, Pair(Pair(buyer, seller), items)))
                 }
             }
             orderAdapter.notifyDataSetChanged()

@@ -10,7 +10,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
-class OrderAdapter(private val orderItems: List<Pair<String, Pair<String, HashMap<String, Int>>>>, private val viewType: String): RecyclerView.Adapter<OrderAdapter.ViewOrder>() {
+class OrderAdapter(private val orderItems: List<Pair<String, Pair<Pair<String, String>, HashMap<String, Int>>>>, private val viewType: String): RecyclerView.Adapter<OrderAdapter.ViewOrder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewOrder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.cart_item, parent, false)
         return ViewOrder(view)
@@ -23,7 +23,7 @@ class OrderAdapter(private val orderItems: List<Pair<String, Pair<String, HashMa
                 .setTitle("Cancel order?")
                 .setMessage("Are you sure you want to cancel this order?")
                 .setPositiveButton("Yes") { _, _ ->
-                    FirestoreHelper.updateOrderStatus(orderItem.first, "Cancelled")
+                    FirestoreHelper.updateOrderStatus(orderItem.second.first.first, orderItem.first, "Cancelled")
                 }
                 .setNegativeButton("No") { _, _ -> }
                 .show()
@@ -44,39 +44,43 @@ class OrderAdapter(private val orderItems: List<Pair<String, Pair<String, HashMa
         private lateinit var checkOutButton: Button
         private lateinit var orderType: String
         private lateinit var orderId: String
+        private lateinit var buyerId: String
+        private lateinit var orderViewType: String
 
-        fun bind(orderItem: Pair<String, Pair<String, HashMap<String, Int>>>, viewType: String) {
-            FirestoreHelper.getAccountInfo(orderItem.second.first) { name, _ ->
+        fun bind(orderItem:  Pair<String, Pair<Pair<String, String>, HashMap<String, Int>>>, viewType: String) {
+            orderViewType = viewType
+            FirestoreHelper.getAccountInfo(orderItem.second.first.first) { name, _ ->
                 itemView.findViewById<TextView>(R.id.cart_seller_name).text = name
             }
             orderId = orderItem.first
+            buyerId = orderItem.second.first.first
             var totalPrice = 0.0
             cartRecyclerView = itemView.findViewById(R.id.cart_item_recycler_view)
             cartRecyclerView.layoutManager = LinearLayoutManager(itemView.context)
-            cartItemAdapter = CartItemAdapter(cartProductItems, orderItem.second.first, "order")
+            cartItemAdapter = CartItemAdapter(cartProductItems, orderId, "order")
             cartRecyclerView.adapter = cartItemAdapter
             initOrderItemListener(orderId)
             for (key in orderItem.second.second.keys) {
-                FirestoreHelper.getProduct(key) { product ->
-                    totalPrice += (product.price * orderItem.second.second[key]!!)
-                    val total = "Total Price: RM %.2f".format(totalPrice)
-                    itemView.findViewById<TextView>(R.id.cart_total_price).text = total
-                    checkOutItems[product] = orderItem.second.second[key]!!
+                FirestoreHelper.getOrderProduct(orderId, key) { product ->
+                    if (product.id != "") {
+                        totalPrice += (product.price * orderItem.second.second[key]!!)
+                        val total = "Total Price: RM %.2f".format(totalPrice)
+                        itemView.findViewById<TextView>(R.id.cart_total_price).text = total
+                        checkOutItems[product] = orderItem.second.second[key]!!
+                    }
                 }
             }
             checkOutButton = itemView.findViewById(R.id.checkout_button)
-            if (viewType == "view_orders") {
-                checkOutButton.visibility = View.GONE
-            }
         }
 
         private fun prepareOrder() {
+            checkOutButton.visibility = View.VISIBLE
             checkOutButton.setOnClickListener {
                 AlertDialog.Builder(itemView.context)
                     .setTitle("Checkout?")
                     .setMessage("Are you sure you want to prepare?")
                     .setPositiveButton("Yes") { _, _ ->
-                        FirestoreHelper.updateOrderStatus(orderId, orderType)
+                        FirestoreHelper.updateOrderStatus(buyerId, orderId, "Preparing")
                     }
                     .setNegativeButton("No") { _, _ -> }
                     .show()
@@ -84,12 +88,13 @@ class OrderAdapter(private val orderItems: List<Pair<String, Pair<String, HashMa
         }
 
         private fun readyOrder() {
+            checkOutButton.visibility = View.VISIBLE
             checkOutButton.setOnClickListener {
                 AlertDialog.Builder(itemView.context)
                     .setTitle("Checkout?")
                     .setMessage("Are you sure you want to ready?")
                     .setPositiveButton("Yes") { _, _ ->
-                        FirestoreHelper.updateOrderStatus(orderId, orderType)
+                        FirestoreHelper.updateOrderStatus(buyerId, orderId, "Ready For Pickup")
                     }
                     .setNegativeButton("No") { _, _ -> }
                     .show()
@@ -97,12 +102,13 @@ class OrderAdapter(private val orderItems: List<Pair<String, Pair<String, HashMa
         }
 
         private fun completeOrder() {
+            checkOutButton.visibility = View.VISIBLE
             checkOutButton.setOnClickListener {
                 AlertDialog.Builder(itemView.context)
                     .setTitle("Checkout?")
                     .setMessage("Are you sure you want to complete?")
                     .setPositiveButton("Yes") { _, _ ->
-                        FirestoreHelper.updateOrderStatus(orderId, orderType)
+                        FirestoreHelper.updateOrderStatus(buyerId, orderId, "Completed")
                     }
                     .setNegativeButton("No") { _, _ -> }
                     .show()
@@ -110,12 +116,17 @@ class OrderAdapter(private val orderItems: List<Pair<String, Pair<String, HashMa
         }
 
         private fun updateCheckoutButton() {
-            val filters = itemView.context.resources.getStringArray(R.array.order_filter)
-            checkOutButton.text = filters[(filters.indexOf(orderType) + 1) % filters.size]
-            when (orderType) {
-                "Pending" -> { prepareOrder() }
-                "Preparing" -> { readyOrder() }
-                "Ready For Pickup" -> { completeOrder() }
+            if (orderViewType != "view_orders") {
+                val filters = itemView.context.resources.getStringArray(R.array.order_filter)
+                checkOutButton.text = filters[(filters.indexOf(orderType) + 1) % filters.size]
+                when (orderType) {
+                    "Pending" -> { prepareOrder() }
+                    "Preparing" -> { readyOrder() }
+                    "Ready For Pickup" -> { completeOrder() }
+                    else -> { checkOutButton.visibility = View.GONE }
+                }
+            } else {
+                checkOutButton.visibility = View.GONE
             }
         }
 

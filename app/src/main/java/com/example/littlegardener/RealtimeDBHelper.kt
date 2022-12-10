@@ -21,7 +21,7 @@ class RealtimeDBHelper {
             val sender = AuthenticationHelper.getCurrentUserUid()
             val ref = getDatabase().getReference("chats")
             val chatId = ref.push().key
-            val chatGroup = ChatGroup(id = chatId!!, parties = hashMapOf(sender to true, receiver to true))
+            val chatGroup = ChatGroup(id = chatId!!, parties = hashMapOf(sender to "Read", receiver to "Read"))
             FirestoreHelper.addChatIdToUsers(chatId, receiver)
             ref.child(chatId).setValue(
                 hashMapOf(
@@ -33,12 +33,17 @@ class RealtimeDBHelper {
             }
         }
 
-        fun pushMessage(chatId: String, message: Message) {
+        private fun setMessageStatus(chatId: String, party: String, status: String) {
+            getChatGroupReferences(chatId).child(party).setValue(status)
+        }
+
+        fun pushMessage(chatId: String, party: String, message: Message) {
             val ref = getChatReference(chatId)
             val key = ref.push().key
             if (key != null) {
                 ref.child(key).setValue(message)
             }
+            setMessageStatus(chatId, party, "Unread")
         }
     }
 }

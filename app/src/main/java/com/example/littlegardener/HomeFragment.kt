@@ -14,6 +14,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.recyclerview.widget.GridLayoutManager
@@ -59,9 +60,7 @@ class HomeFragment : Fragment() {
         searchEditText.setOnEditorActionListener { textView, i, _ ->
             if ((i == EditorInfo.IME_ACTION_SEARCH) && (textView.text.isNotEmpty())) {
                 textView.text = ""
-                val intent = Intent(context, LiveChatActivity::class.java)
-                intent.putExtra("search", textView.text.toString())
-                startActivity(intent)
+                Toast.makeText(context, "Search function to be implemented", Toast.LENGTH_SHORT).show()
             }
             true
         }

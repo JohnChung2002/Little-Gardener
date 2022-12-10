@@ -5,7 +5,7 @@ import kotlinx.parcelize.Parcelize
 
 data class ChatGroup(
     val id: String = "",
-    val parties: HashMap<String, Boolean> = hashMapOf(),
+    val parties: HashMap<String, String> = hashMapOf(),
     var messages: HashMap<String, Message> = hashMapOf()
 )
 
