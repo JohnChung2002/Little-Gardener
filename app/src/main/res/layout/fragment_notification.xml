@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     tools:context=".NotificationFragment" >
 
-    <androidx.appcompat.widget.Toolbar
+    <Toolbar
         android:id="@+id/notification_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

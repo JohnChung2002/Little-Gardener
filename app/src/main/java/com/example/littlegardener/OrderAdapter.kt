@@ -18,7 +18,7 @@ class OrderAdapter(private val orderItems: List<Pair<String, Pair<Pair<String, S
 
     override fun onBindViewHolder(holder: ViewOrder, position: Int) {
         val orderItem = orderItems[position]
-        if (viewType == "view_orders") {
+        if (viewType != "view_orders") {
             holder.itemView.setOnLongClickListener {
                 AlertDialog.Builder(holder.itemView.context)
                     .setTitle("Cancel order?")
@@ -89,8 +89,8 @@ class OrderAdapter(private val orderItems: List<Pair<String, Pair<Pair<String, S
             checkOutButton.visibility = View.VISIBLE
             checkOutButton.setOnClickListener {
                 AlertDialog.Builder(itemView.context)
-                    .setTitle("Checkout?")
-                    .setMessage("Are you sure you want to prepare?")
+                    .setTitle("Prepare order?")
+                    .setMessage("Are you sure you want to set the order to preparing?")
                     .setPositiveButton("Yes") { _, _ ->
                         FirestoreHelper.updateOrderStatus(buyerId, orderId, "Preparing")
                     }
@@ -103,8 +103,8 @@ class OrderAdapter(private val orderItems: List<Pair<String, Pair<Pair<String, S
             checkOutButton.visibility = View.VISIBLE
             checkOutButton.setOnClickListener {
                 AlertDialog.Builder(itemView.context)
-                    .setTitle("Checkout?")
-                    .setMessage("Are you sure you want to ready?")
+                    .setTitle("Ready to Pickup Order?")
+                    .setMessage("Are you sure you want to set the order to ready for pickup?")
                     .setPositiveButton("Yes") { _, _ ->
                         FirestoreHelper.updateOrderStatus(buyerId, orderId, "Ready For Pickup")
                     }
@@ -117,8 +117,8 @@ class OrderAdapter(private val orderItems: List<Pair<String, Pair<Pair<String, S
             checkOutButton.visibility = View.VISIBLE
             checkOutButton.setOnClickListener {
                 AlertDialog.Builder(itemView.context)
-                    .setTitle("Checkout?")
-                    .setMessage("Are you sure you want to complete?")
+                    .setTitle("Complete Order?")
+                    .setMessage("Are you sure you want to set the order to completed?")
                     .setPositiveButton("Yes") { _, _ ->
                         FirestoreHelper.updateOrderStatus(buyerId, orderId, "Completed")
                     }

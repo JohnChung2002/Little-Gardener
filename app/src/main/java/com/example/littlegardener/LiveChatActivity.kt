@@ -111,7 +111,7 @@ class LiveChatActivity : AppCompatActivity() {
         if (result.resultCode == RESULT_OK) {
             result.data?.data?.let { uri ->
                 StorageHelper.uploadImage(this, uri) {
-                    val message = Message(AuthenticationHelper.getCurrentUserUid(), chatItem.receiver,"image", it)
+                    val message = Message(AuthenticationHelper.getCurrentUserUid(), chatItem.receiver,"image", it, FirestoreHelper.getCurrTimestamp())
                     if (type != "exists") {
                         RealtimeDBHelper.createChat(chatItem.receiver) { id ->
                             chatItem.id = id

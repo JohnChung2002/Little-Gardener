@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 
 class CartItemAdapter(private val cartItems: List<Pair<String, Int>>, private val id: String, private val type: String): RecyclerView.Adapter<CartItemAdapter.ViewCartItem>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewCartItem {
@@ -43,6 +44,7 @@ class CartItemAdapter(private val cartItems: List<Pair<String, Int>>, private va
                         itemView.findViewById<TextView>(R.id.product_name).text = product.name
                         val quantity = "Qty: ${cartItem.second}"
                         itemView.findViewById<TextView>(R.id.product_quantity).text = quantity
+                        Glide.with(itemView.context).load(product.images[0]).into(itemView.findViewById(R.id.product_image))
                     }
                 }
             } else {
@@ -51,6 +53,7 @@ class CartItemAdapter(private val cartItems: List<Pair<String, Int>>, private va
                         itemView.findViewById<TextView>(R.id.product_name).text = product.name
                         val quantity = "Qty: ${cartItem.second}"
                         itemView.findViewById<TextView>(R.id.product_quantity).text = quantity
+                        Glide.with(itemView.context).load(product.images[0]).into(itemView.findViewById(R.id.product_image))
                     }
                 }
             }
