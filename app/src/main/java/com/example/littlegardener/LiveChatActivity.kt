@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.firestore.ListenerRegistration
 
 class LiveChatActivity : AppCompatActivity() {
     private lateinit var type: String
@@ -25,6 +26,7 @@ class LiveChatActivity : AppCompatActivity() {
     private lateinit var messageEditText: EditText
     private lateinit var sendButton: ImageView
     private var messageHashmap: MutableMap<String, Message> = mutableMapOf()
+    private lateinit var eventListener: ValueEventListener
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -87,7 +89,7 @@ class LiveChatActivity : AppCompatActivity() {
 
     private fun realtimeDBListener() {
         val ref = RealtimeDBHelper.getChatReference(chatItem.id)
-        ref.addValueEventListener(object : ValueEventListener {
+        eventListener = ref.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 for (child in snapshot.children) {
                     val message = child.getValue(Message::class.java)
@@ -95,6 +97,7 @@ class LiveChatActivity : AppCompatActivity() {
                         messageHashmap[child.key!!] = it
                     }
                 }
+                RealtimeDBHelper.setMessageStatus(chatItem.id, AuthenticationHelper.getCurrentUserUid(), "Read")
                 chatAdapter.notifyDataSetChanged()
                 recyclerView.scrollToPosition(messageHashmap.size - 1)
             }
@@ -120,14 +123,20 @@ class LiveChatActivity : AppCompatActivity() {
                         RealtimeDBHelper.pushMessage(chatItem.id, chatItem.receiver, message)
                     }
                 }
-                Toast.makeText(this, uri.toString(), Toast.LENGTH_SHORT).show()
             }
         }
     }
 
+    override fun onBackPressed() {
+        eventListener.let {
+            RealtimeDBHelper.getChatReference(chatItem.id).removeEventListener(it)
+        }
+        super.onBackPressed()
+    }
+
     private fun sendMessage() {
         messageEditText.text.toString().let {
-            val message = Message(AuthenticationHelper.getCurrentUserUid(), chatItem.receiver,"message", it)
+            val message = Message(AuthenticationHelper.getCurrentUserUid(), chatItem.receiver,"message", it, FirestoreHelper.getCurrTimestamp())
             if (type != "exists") {
                 RealtimeDBHelper.createChat(chatItem.receiver) { id ->
                     chatItem.id = id

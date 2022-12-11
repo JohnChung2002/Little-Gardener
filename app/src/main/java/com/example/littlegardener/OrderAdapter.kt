@@ -18,16 +18,22 @@ class OrderAdapter(private val orderItems: List<Pair<String, Pair<Pair<String, S
 
     override fun onBindViewHolder(holder: ViewOrder, position: Int) {
         val orderItem = orderItems[position]
-        holder.itemView.setOnLongClickListener {
-            AlertDialog.Builder(holder.itemView.context)
-                .setTitle("Cancel order?")
-                .setMessage("Are you sure you want to cancel this order?")
-                .setPositiveButton("Yes") { _, _ ->
-                    FirestoreHelper.updateOrderStatus(orderItem.second.first.first, orderItem.first, "Cancelled")
-                }
-                .setNegativeButton("No") { _, _ -> }
-                .show()
-            true
+        if (viewType == "view_orders") {
+            holder.itemView.setOnLongClickListener {
+                AlertDialog.Builder(holder.itemView.context)
+                    .setTitle("Cancel order?")
+                    .setMessage("Are you sure you want to cancel this order?")
+                    .setPositiveButton("Yes") { _, _ ->
+                        FirestoreHelper.updateOrderStatus(
+                            orderItem.second.first.first,
+                            orderItem.first,
+                            "Cancelled"
+                        )
+                    }
+                    .setNegativeButton("No") { _, _ -> }
+                    .show()
+                true
+            }
         }
         holder.bind(orderItem, viewType)
     }
@@ -49,8 +55,14 @@ class OrderAdapter(private val orderItems: List<Pair<String, Pair<Pair<String, S
 
         fun bind(orderItem:  Pair<String, Pair<Pair<String, String>, HashMap<String, Int>>>, viewType: String) {
             orderViewType = viewType
-            FirestoreHelper.getAccountInfo(orderItem.second.first.first) { name, _ ->
-                itemView.findViewById<TextView>(R.id.cart_seller_name).text = name
+            if (viewType != "view_orders") {
+                FirestoreHelper.getAccountInfo(orderItem.second.first.first) { name, _ ->
+                    itemView.findViewById<TextView>(R.id.cart_seller_name).text = name
+                }
+            } else {
+                FirestoreHelper.getAccountInfo(orderItem.second.first.second) { name, _ ->
+                    itemView.findViewById<TextView>(R.id.cart_seller_name).text = name
+                }
             }
             orderId = orderItem.first
             buyerId = orderItem.second.first.first

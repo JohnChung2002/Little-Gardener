@@ -5,8 +5,10 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 
 class MessageAdapter(private val chatList: List<ChatItem>): RecyclerView.Adapter<MessageAdapter.ViewMessage>() {
     interface MessageListener {
@@ -40,7 +42,16 @@ class MessageAdapter(private val chatList: List<ChatItem>): RecyclerView.Adapter
     class ViewMessage(itemView: View): RecyclerView.ViewHolder(itemView) {
         fun bind(chatItem: ChatItem) {
             itemView.findViewById<TextView>(R.id.user_name).text = chatItem.name
-            //image
+            if (chatItem.image != "") {
+                Glide.with(itemView).load(chatItem.image).into(itemView.findViewById(R.id.user_icon))
+            } else {
+                itemView.findViewById<ImageView>(R.id.user_icon).setImageResource(R.drawable.user_icon)
+            }
+            if (chatItem.status == "Read") {
+                itemView.findViewById<ImageView>(R.id.unread_indicator).visibility = View.GONE
+            } else {
+                itemView.findViewById<ImageView>(R.id.unread_indicator).visibility = View.VISIBLE
+            }
         }
     }
 }

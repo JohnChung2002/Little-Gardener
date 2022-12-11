@@ -11,6 +11,7 @@ class FullScreenImageActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_full_screen_image)
+        photoView = findViewById(R.id.photo_view)
         intent.getStringExtra("image")?.let {
             Glide.with(this).load(it).into(photoView)
         }

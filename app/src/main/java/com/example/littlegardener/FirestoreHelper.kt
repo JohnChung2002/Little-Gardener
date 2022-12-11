@@ -27,7 +27,6 @@ class FirestoreHelper {
                 "name" to name,
                 "role" to "User",
                 "chatList" to listOf<String>(),
-                "ordersList" to listOf<String>(),
                 "image" to ""
             )
             db.set(data)
@@ -38,6 +37,16 @@ class FirestoreHelper {
             db.collection("users").document(id).get().addOnSuccessListener {
                 listener.invoke(it.get("name").toString(), it.get("image").toString())
             }
+        }
+
+        fun updateProfileName(name: String) {
+            val db = getCurrUserDocument()
+            db.update("name", name)
+        }
+
+        fun updateProfileImage(image: String) {
+            val db = getCurrUserDocument()
+            db.update("image", image)
         }
 
         fun addProduct(product: Product) {
@@ -51,9 +60,7 @@ class FirestoreHelper {
             data["seller"] = product.seller
             getRole {
                 if (it == "Admin") {
-                    db.add(data).addOnSuccessListener { ref ->
-                        updateToCategories(ref.id, product.category)
-                    }
+                    db.add(data)
                 }
             }
         }
@@ -79,7 +86,6 @@ class FirestoreHelper {
             getRole {
                 if (it == "Admin") {
                     db.document(id).delete()
-                    removeFromCategories(id, category)
                 }
             }
         }
@@ -90,10 +96,6 @@ class FirestoreHelper {
                 try {
                     val info = it.data as HashMap<String, Any>
                     val productMap = info["products"] as HashMap<String, Any>
-                    println("------------------------")
-                    println("orderId: $orderId")
-                    println("id = $id")
-                    println("++++++++++++++++++++++++")
                     val product = productMap[id] as HashMap<String, Any>
                     val returnProduct = Product(
                         id,
@@ -205,12 +207,29 @@ class FirestoreHelper {
             }
         }
 
+        fun immediateOrder(product: Product, listener: (Boolean) -> Unit) {
+            val db = getOrdersCollection()
+            val data: MutableMap<String, Any> = mutableMapOf()
+            data["products"] = mapOf(product.id to mapOf("id" to product.id, "name" to product.name, "price" to product.price, "description" to product.description, "category" to product.category, "images" to product.images, "seller" to product.seller, "quantity" to 1))
+            data["buyer"] = AuthenticationHelper.getCurrentUserUid()
+            data["seller"] = product.seller
+            data["status"] = "Pending"
+            data["timestamp"] = getCurrTimestamp()
+            db.add(data).addOnSuccessListener {
+                addNotification(product.seller, Notification(title = "New Order", description = "You have a new order. Please check the manage product list", timestamp = getCurrTimestamp()))
+                listener.invoke(true)
+            }.addOnFailureListener {
+                listener.invoke(false)
+            }
+        }
+
         fun completeOrder(seller: String, listener: (Boolean) -> Unit) {
             var itemCount: Int
             var count = 0
             var totalPrice = 0.0
             val data: MutableMap<String, Any> = mutableMapOf()
             val productsData: MutableMap<String, Any> = mutableMapOf()
+            data["timestamp"] = getCurrTimestamp()
             data["seller"] = seller
             data["buyer"] = AuthenticationHelper.getCurrentUserUid()
             data["status"] = "Pending"
@@ -233,8 +252,7 @@ class FirestoreHelper {
                                     data["products"] = productsData
                                     data["price"] = totalPrice
                                     getCurrCartDocument().update(seller, FieldValue.delete())
-                                    getOrdersCollection().add(data).addOnSuccessListener { ref ->
-                                        getCurrUserDocument().update("ordersList", FieldValue.arrayUnion(ref.id))
+                                    getOrdersCollection().add(data).addOnSuccessListener {
                                         addNotification(seller, Notification(title = "New Order", description = "You have a new order. Please check the manage product list", timestamp = getCurrTimestamp()))
                                         listener.invoke(true)
                                     }.addOnFailureListener {
@@ -275,46 +293,21 @@ class FirestoreHelper {
         }
 
         private fun addNotification(id: String, notification: Notification) {
-            val db = getNotificationCollection()
-            db.document(id).get().addOnSuccessListener {
+            val db = getNotificationCollection().document(id)
+            db.get().addOnSuccessListener {
                 if (it.exists()) {
-                    db.document(id).update("notifications", FieldValue.arrayUnion(notification))
+                    db.update("notifications", FieldValue.arrayUnion(notification))
                 } else {
                     val data = hashMapOf(
-                        "notifications" to listOf(notification)
+                        "notifications" to listOf(hashMapOf(
+                            "title" to notification.title,
+                            "description" to notification.description,
+                            "timestamp" to notification.timestamp
+                        ))
                     )
-                    db.document(id).set(data)
+                    db.set(data)
                 }
             }
-        }
-
-        fun getCategoriesCollection(): CollectionReference {
-            return getDatabase().collection("categories")
-        }
-
-        private fun updateToCategories(id: String, category: String) {
-            val db = getCategoriesCollection()
-            db.document(category).get().addOnSuccessListener {
-                if (it.exists()) {
-                    db.document(category).update("items", FieldValue.arrayUnion(id))
-                } else {
-                    val data = hashMapOf(
-                        "items" to listOf(id)
-                    )
-                    db.document(category).set(data)
-                }
-            }
-        }
-
-        private fun removeFromCategories(id: String, category: String) {
-            val db = getCategoriesCollection()
-            db.document(category).update("items", FieldValue.arrayRemove(id))
-            db.document(category).get().addOnSuccessListener {
-                if (it.get("items") as List<*> == listOf<Any>()) {
-                    db.document(category).delete()
-                }
-            }
-
         }
 
         fun getProductCollection(): CollectionReference {
@@ -327,6 +320,19 @@ class FirestoreHelper {
 
         fun getCurrCartDocument(): DocumentReference {
             return getDatabase().collection("carts").document(AuthenticationHelper.getCurrentUserUid())
+        }
+
+        fun updateChatStatus(receiver: String) {
+            val db = getDatabase().collection("users").document(receiver)
+            db.get().addOnSuccessListener {
+                if (it.exists()) {
+                    if (it.get("chat") != null) {
+                        db.update("chat", FieldValue.delete())
+                    } else {
+                        db.update("chat", "ping")
+                    }
+                }
+            }
         }
 
         fun initCart(listener: (Boolean) -> Unit) {
@@ -343,7 +349,7 @@ class FirestoreHelper {
             }
         }
 
-        private fun getCurrTimestamp(): String {
+        fun getCurrTimestamp(): String {
             return DateTimeFormatter
                 .ofPattern("yyyy-MM-dd HH:mm:ss")
                 .withZone(ZoneOffset.UTC)

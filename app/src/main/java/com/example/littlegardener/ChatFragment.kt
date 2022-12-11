@@ -11,11 +11,13 @@ import com.google.android.gms.auth.api.Auth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.storage.FirebaseStorage
 
 class ChatFragment : Fragment() {
     private lateinit var messageAdapter: MessageAdapter
     private var chatRecyclerList: MutableList<ChatItem> = mutableListOf()
+    private lateinit var snapshotListener: ListenerRegistration
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,28 +37,19 @@ class ChatFragment : Fragment() {
     }
 
     private fun realtimeDBListener() {
-        FirestoreHelper.getCurrUserDocument().addSnapshotListener { snapshot, e ->
+        val db = FirestoreHelper.getCurrUserDocument()
+        snapshotListener = db.addSnapshotListener { snapshot, e ->
             if (e != null) {
                 return@addSnapshotListener
             }
             val chats = snapshot?.data?.get("chatList") as ArrayList<String>
+            chatRecyclerList.clear()
             for (chatId in chats) {
-                val ref = RealtimeDBHelper.getChatGroupReferences(chatId)
-                ref.addValueEventListener(object : ValueEventListener {
-                    override fun onDataChange(snapshot: DataSnapshot) {
-                        chatRecyclerList.clear()
-                        for (party in snapshot.children) {
-                            if (party.key != AuthenticationHelper.getCurrentUserUid()) {
-                                FirestoreHelper.getAccountInfo(party.key.toString()) { name, image ->
-                                    chatRecyclerList.add(ChatItem(chatId, name, party.key.toString(), image))
-                                    messageAdapter.notifyDataSetChanged()
-                                }
-                            }
-                        }
-                    }
-                    override fun onCancelled(error: DatabaseError) {
-                    }
-                })
+                RealtimeDBHelper.getChatInfo(chatId) { chatItem ->
+                    println("Add--- $chatItem")
+                    chatRecyclerList.add(chatItem)
+                    messageAdapter.notifyDataSetChanged()
+                }
             }
         }
     }

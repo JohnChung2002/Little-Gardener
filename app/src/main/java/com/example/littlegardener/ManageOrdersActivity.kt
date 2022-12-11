@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
 import android.widget.Spinner
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.firestore.ListenerRegistration
@@ -35,6 +36,7 @@ class ManageOrdersActivity : AppCompatActivity() {
         }
         val cartRecyclerView = findViewById<RecyclerView>(R.id.orders_recycler_view)
         cartRecyclerView.layoutManager = LinearLayoutManager(this)
+        cartRecyclerView.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
         orderAdapter = OrderAdapter(orderList, type)
         cartRecyclerView.adapter = orderAdapter
     }

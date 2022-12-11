@@ -14,12 +14,14 @@ data class ChatItem(
     var id: String = "",
     var name: String = "",
     var receiver: String = "",
-    var image: String = ""
+    var image: String = "",
+    var status: String = ""
 ): Parcelable
 
 data class Message(
     val sender: String = "",
     val receiver: String = "",
     val type: String = "",
-    val message: String = ""
+    val message: String = "",
+    val timestamp: String = ""
 )

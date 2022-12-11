@@ -78,7 +78,7 @@ class ChatAdapter(private val chatsHashmap: MutableMap<String, Message>): Recycl
                     itemView.context.startActivity(intent)
                 }
             }
-
+            itemView.findViewById<TextView>(R.id.message_timestamp).text = FirestoreHelper.getTimeInTimeZone(itemView.context, message.timestamp)
         }
     }
 }

@@ -108,15 +108,17 @@ class HomeFragment : Fragment() {
     }
 
     private fun loadCategoryListener() {
-        val ref = FirestoreHelper.getCategoriesCollection()
-        ref.addSnapshotListener { snapshot, e ->
-            if (e != null) {
+        val ref = FirestoreHelper.getProductCollection()
+        ref.addSnapshotListener { snapshot, error ->
+            if (error != null) {
                 return@addSnapshotListener
             }
             if (snapshot != null) {
                 categoryList.clear()
                 for (document in snapshot) {
-                    categoryList.add(document.id)
+                    if (!categoryList.contains(document.data["category"].toString())) {
+                        categoryList.add(document.data["category"].toString())
+                    }
                 }
                 categoryAdapter.notifyDataSetChanged()
             }

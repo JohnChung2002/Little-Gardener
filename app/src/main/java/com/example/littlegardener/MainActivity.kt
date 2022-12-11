@@ -164,7 +164,7 @@ class MainActivity : AppCompatActivity(), LoginFragment.OnLoginListener, SignUpF
                 signInOAuth(credential)
             }
         }else{
-            Toast.makeText(this, task.exception.toString() , Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Login Failed!" , Toast.LENGTH_SHORT).show()
         }
     }
 

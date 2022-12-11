@@ -9,12 +9,37 @@ class RealtimeDBHelper {
             return FirebaseDatabase.getInstance()
         }
 
-        fun getChatGroupReferences(id: String): DatabaseReference {
+        private fun getChatGroupReferences(id: String): DatabaseReference {
             return getDatabase().getReference("chats").child(id).child("parties")
         }
 
         fun getChatReference(chatId: String):DatabaseReference {
             return getDatabase().getReference("chats").child(chatId).child("messages")
+        }
+
+        fun getChatInfo(chatId: String, listener: (ChatItem) -> Unit) {
+            retrieveChatInfo(chatId) { chatItem ->
+                FirestoreHelper.getAccountInfo(chatItem.receiver) { name, image ->
+                    chatItem.name = name
+                    chatItem.image = image
+                    listener.invoke(chatItem)
+                }
+            }
+        }
+
+        private fun retrieveChatInfo(chatId: String, listener: (ChatItem) -> Unit) {
+            val db = getChatGroupReferences(chatId)
+            db.get().addOnSuccessListener {
+                val chatItem = ChatItem(chatId, "", "", "", "")
+                for (party in it.children) {
+                    if (party.key == AuthenticationHelper.getCurrentUserUid()) {
+                        chatItem.status = party.value.toString()
+                    } else {
+                        chatItem.receiver = party.key.toString()
+                    }
+                }
+                listener.invoke(chatItem)
+            }
         }
 
         fun createChat(receiver: String, listener: (String) -> Unit) {
@@ -33,8 +58,9 @@ class RealtimeDBHelper {
             }
         }
 
-        private fun setMessageStatus(chatId: String, party: String, status: String) {
+        fun setMessageStatus(chatId: String, party: String, status: String) {
             getChatGroupReferences(chatId).child(party).setValue(status)
+            FirestoreHelper.updateChatStatus(party)
         }
 
         fun pushMessage(chatId: String, party: String, message: Message) {

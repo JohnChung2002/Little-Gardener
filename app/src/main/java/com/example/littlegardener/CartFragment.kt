@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
@@ -24,6 +25,7 @@ class CartFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_cart, container, false)
         val cartRecyclerView = view.findViewById<RecyclerView>(R.id.cart_recycler_view)
         cartRecyclerView.layoutManager = LinearLayoutManager(context)
+        cartRecyclerView.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
         cartAdapter = CartAdapter(cartList)
         cartRecyclerView.adapter = cartAdapter
         return view
@@ -41,6 +43,7 @@ class CartFragment : Fragment() {
                     for (i in snapshot.data!!.keys) {
                         cartList.add(Pair(i, snapshot.data!![i] as HashMap<String, Int>))
                     }
+                    cartList.sortBy { it.first }
                     cartAdapter.notifyDataSetChanged()
                 }
             }

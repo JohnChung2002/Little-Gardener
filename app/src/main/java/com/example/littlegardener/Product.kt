@@ -2,6 +2,7 @@ package com.example.littlegardener
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
+import java.sql.Timestamp
 
 @Parcelize
 data class Product(

@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.ViewStub
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -276,7 +277,18 @@ class CrudActivity : AppCompatActivity(), CrudProductAdapter.OnProductClickListe
                     true
                 }
                 else -> {
-                    //Order Activity
+                    AlertDialog.Builder(this)
+                        .setTitle("Order")
+                        .setMessage("Are you sure you want to order this product?")
+                        .setPositiveButton("Yes") { _, _ ->
+                            FirestoreHelper.immediateOrder(currProduct) { success ->
+                                if (success) {
+                                    Toast.makeText(this, "Order placed", Toast.LENGTH_SHORT).show()
+                                }
+                            }
+                        }
+                        .setNegativeButton("No") { _, _ -> }
+                        .show()
                     true
                 }
             }
