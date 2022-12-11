@@ -9,7 +9,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
         <ImageView
             android:id="@+id/profile_header"
@@ -20,7 +20,8 @@
             android:adjustViewBounds="true"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            android:contentDescription="@string/header_image"/>
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/profile_image"
@@ -40,7 +41,7 @@
             android:id="@+id/profile_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="User"
+            android:text="@string/user"
             android:layout_marginTop="8dp"
             android:textSize="16sp"
             android:textStyle="bold"
@@ -58,7 +59,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/profile_name"
             android:drawableStart="@drawable/user_icon"
-            android:text="View Orders"/>
+            android:text="@string/view_orders"/>
 
         <Button
             android:id="@+id/edit_profile_button"
@@ -69,7 +70,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/view_orders_button"
             android:drawableStart="@drawable/user_icon"
-            android:text="Edit Profile"/>
+            android:text="@string/edit_profile"/>
 
         <Button
             android:id="@+id/change_password_button"
@@ -80,7 +81,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/edit_profile_button"
             android:drawableStart="@drawable/user_icon"
-            android:text="Change Password"/>
+            android:text="@string/change_password"/>
 
         <Button
             android:id="@+id/log_out_button"
@@ -91,7 +92,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/change_password_button"
             android:drawableStart="@drawable/user_icon"
-            android:text="Log Out"/>
+            android:text="@string/log_out"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -21,7 +21,7 @@
         android:paddingEnd="10dp"
         android:paddingBottom="10dp"
         android:layout_margin="8dp"
-        android:text="Create Product Listing"
+        android:text="@string/create_product_listing"
         android:textStyle="bold"
         android:textSize="16sp"
         android:textAlignment="textEnd" />
@@ -37,7 +37,7 @@
         android:paddingEnd="10dp"
         android:paddingBottom="10dp"
         android:layout_margin="8dp"
-        android:text="Edit Product Listing"
+        android:text="@string/edit_product_listing"
         android:textStyle="bold"
         android:textSize="16sp"
         android:textAlignment="textEnd" />
@@ -53,7 +53,7 @@
         android:paddingEnd="10dp"
         android:paddingBottom="10dp"
         android:layout_margin="8dp"
-        android:text="Delete Product Listing"
+        android:text="@string/delete_product_listing"
         android:textStyle="bold"
         android:textSize="16sp"
         android:textAlignment="textEnd" />
@@ -69,7 +69,7 @@
         android:paddingEnd="10dp"
         android:paddingBottom="10dp"
         android:layout_margin="8dp"
-        android:text="Manage Customer Orders (Self)"
+        android:text="@string/manage_customer_orders_self"
         android:textStyle="bold"
         android:textSize="16sp"
         android:textAlignment="textEnd" />
@@ -85,7 +85,7 @@
         android:paddingEnd="10dp"
         android:paddingBottom="10dp"
         android:layout_margin="8dp"
-        android:text="Manage Customer Orders (All)"
+        android:text="@string/manage_customer_orders_all"
         android:textStyle="bold"
         android:textSize="16sp"
         android:textAlignment="textEnd" />

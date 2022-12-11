@@ -17,7 +17,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0"
-        app:srcCompat="@drawable/background" />
+        app:srcCompat="@drawable/background"
+        android:contentDescription="@string/background_image"/>
 
     <ImageView
         android:id="@+id/logo"
@@ -27,13 +28,14 @@
         app:layout_constraintEnd_toStartOf="@id/app_name"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/logo" />
+        app:srcCompat="@drawable/logo"
+        android:contentDescription="@string/app_logo"/>
 
     <TextView
         android:id="@+id/app_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Little\nGardener"
+        android:text="@string/app_name_newline"
         android:textSize="30sp"
         android:textStyle="bold"
         android:textColor="@color/black"
@@ -49,13 +51,14 @@
         android:layout_marginHorizontal="30dp"
         android:layout_marginTop="60dp"
         android:ems="10"
-        android:hint="Email Address"
+        android:hint="@string/email_address"
         android:paddingHorizontal="10dp"
         android:background="@drawable/edit_text_shape_transparent"
         android:inputType="textEmailAddress"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/logo" />
+        app:layout_constraintTop_toBottomOf="@+id/logo"
+        android:autofillHints="emailAddress" />
 
     <EditText
         android:id="@+id/password"
@@ -63,14 +66,15 @@
         android:layout_height="48dp"
         android:layout_marginHorizontal="30dp"
         android:ems="10"
-        android:hint="Password"
+        android:hint="@string/password"
         android:layout_marginTop="10dp"
         android:paddingHorizontal="10dp"
         android:background="@drawable/edit_text_shape_transparent"
         android:inputType="textPassword"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/email" />
+        app:layout_constraintTop_toBottomOf="@id/email"
+        android:autofillHints="password" />
 
     <Button
         android:id="@+id/login_button"
@@ -78,7 +82,7 @@
         android:layout_height="48dp"
         android:layout_marginHorizontal="30dp"
         android:layout_marginTop="20dp"
-        android:text="Login"
+        android:text="@string/login"
         android:textSize="16sp"
         android:textAllCaps="false"
         app:layout_constraintEnd_toEndOf="parent"
@@ -89,7 +93,7 @@
         android:id="@+id/forgot_password"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Forgot Password?"
+        android:text="@string/forgot_password_question"
         android:layout_marginTop="8sp"
         android:textSize="16sp"
         app:layout_constraintTop_toBottomOf="@id/login_button"
@@ -100,7 +104,7 @@
         android:id="@+id/sign_up"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Register Here"
+        android:text="@string/register_here"
         android:textSize="16sp"
         android:layout_marginTop="8sp"
         app:layout_constraintTop_toBottomOf="@id/forgot_password"

@@ -6,7 +6,6 @@
     android:layout_height="wrap_content"
     android:background="@drawable/rounded_shape"
     android:layout_margin="8dp"
-    android:text="dgragreherha"
     android:textColor="@color/black"
     android:textStyle="bold"
     android:gravity="bottom|end"

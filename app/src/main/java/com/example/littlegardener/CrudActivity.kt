@@ -81,6 +81,7 @@ class CrudActivity : AppCompatActivity(), CrudProductAdapter.OnProductClickListe
     private fun loadAddProductDetails() {
         setTitle()
         initUIFields()
+        submitButton.text = getString(R.string.add_product)
         submitButton.setOnClickListener {
             if (validateAddFields()) {
                 createNewProduct()
@@ -168,6 +169,7 @@ class CrudActivity : AppCompatActivity(), CrudProductAdapter.OnProductClickListe
         setTitle()
         initUIFields()
         updateProductFields()
+        submitButton.text = getString(R.string.update_product)
         submitButton.setOnClickListener {
             if (validateAddFields()) {
                 editProduct()
@@ -179,7 +181,6 @@ class CrudActivity : AppCompatActivity(), CrudProductAdapter.OnProductClickListe
         nameEditText.setText(currProduct.name)
         priceEditText.setText(currProduct.price.toString())
         categoryEditText.setText(currProduct.category)
-        categoryEditText.isEnabled = false
         descriptionEditText.setText(currProduct.description)
     }
 

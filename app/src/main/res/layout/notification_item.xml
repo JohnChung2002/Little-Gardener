@@ -14,13 +14,13 @@
         app:layout_constraintBottom_toBottomOf="@id/notification_description"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/notification_title"
-        android:src="@drawable/cart_icon"/>
+        android:src="@drawable/cart_icon"
+        android:contentDescription="@string/cart_icon"/>
 
     <TextView
         android:id="@+id/notification_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="title"
         app:layout_constraintStart_toEndOf="@id/notification_thumbnail"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toStartOf="@id/notification_timestamp"
@@ -32,7 +32,6 @@
         android:id="@+id/notification_timestamp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="timestamp"
         app:layout_constraintStart_toEndOf="@id/notification_title"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/notification_title"
@@ -43,7 +42,6 @@
         android:id="@+id/notification_description"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Description"
         app:layout_constraintStart_toEndOf="@id/notification_thumbnail"
         app:layout_constraintTop_toBottomOf="@id/notification_title"
         app:layout_constraintBottom_toBottomOf="parent"

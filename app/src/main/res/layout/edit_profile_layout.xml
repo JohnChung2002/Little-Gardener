@@ -8,7 +8,7 @@
         android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Edit Profile"
+        android:text="@string/edit_profile"
         android:textSize="20sp"
         android:textStyle="bold"
         android:elevation="1dp"
@@ -29,7 +29,8 @@
         android:adjustViewBounds="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:contentDescription="@string/header_image"/>
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/profile_image"
@@ -57,7 +58,8 @@
         app:layout_constraintTop_toTopOf="@id/profile_image"
         app:layout_constraintBottom_toBottomOf="@id/profile_image"
         android:elevation="60dp"
-        android:background="@drawable/circle_holder"/>
+        android:background="@drawable/circle_holder"
+        android:contentDescription="@string/edit_profile"/>
 
     <EditText
         android:id="@+id/profile_name"
@@ -67,11 +69,12 @@
         app:layout_constraintTop_toBottomOf="@id/profile_image"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:hint="Name"
+        android:hint="@string/name"
         android:inputType="text"
         android:background="@drawable/edit_text_shape_transparent"
         android:paddingVertical="8dp"
-        android:paddingHorizontal="8dp"/>
+        android:paddingHorizontal="8dp"
+        android:importantForAutofill="no" />
 
     <Button
         android:id="@+id/change_password_button"
@@ -79,7 +82,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
         android:layout_marginTop="16dp"
-        android:text="Edit Profile"
+        android:text="@string/edit_profile"
         app:layout_constraintTop_toBottomOf="@id/profile_name"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>

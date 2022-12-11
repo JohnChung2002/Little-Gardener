@@ -18,7 +18,8 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginStart="20dp"/>
+        android:layout_marginStart="20dp"
+        android:contentDescription="@string/user_icon"/>
 
     <ImageView
         android:id="@+id/unread_indicator"
@@ -28,14 +29,17 @@
         app:layout_constraintStart_toEndOf="@id/user_icon"
         android:layout_marginStart="-5dp"
         android:background="@drawable/unread_dot"
-        android:elevation="5dp"/>
+        android:elevation="5dp"
+        android:visibility="gone"
+        android:contentDescription="@string/unread_indicator"/>
 
     <TextView
         android:id="@+id/user_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Name"
+        android:text="@string/name"
         android:layout_marginStart="16dp"
+        android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@id/user_icon"
         app:layout_constraintTop_toTopOf="@id/user_icon"
