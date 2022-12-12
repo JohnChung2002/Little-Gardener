@@ -5,7 +5,6 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
@@ -26,7 +25,6 @@ class NotificationFragment : Fragment() {
         val recyclerView = view.findViewById<RecyclerView>(R.id.notification_recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(context)
         notificationAdapter = NotificationAdapter(notificationRecyclerList)
-        recyclerView.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
         recyclerView.adapter = notificationAdapter
         return view
     }

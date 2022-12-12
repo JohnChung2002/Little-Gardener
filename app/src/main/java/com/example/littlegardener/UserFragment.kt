@@ -64,6 +64,7 @@ class UserFragment : Fragment() {
         FirestoreHelper.getRole {
             if (it == "Admin") {
                 viewOrdersButton.visibility = View.GONE
+                viewOrdersButton.setOnClickListener(null)
             } else {
                 viewOrdersButton.setOnClickListener {
                     callback.viewOrders()

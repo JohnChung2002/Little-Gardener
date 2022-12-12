@@ -7,11 +7,12 @@
     android:layout_height="match_parent"
     tools:context=".CartFragment">
 
-    <Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/cart_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:title="@string/cart"
+        app:title="@string/chat"
+        app:titleTextColor="@color/black"
         android:background="@drawable/main_gradient"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"

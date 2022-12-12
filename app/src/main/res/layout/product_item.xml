@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     android:scaleType="fitXY"
     android:background="@color/white"
-    android:layout_margin="5dp"
+    android:layout_margin="8dp"
     app:cardCornerRadius="5dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -31,10 +31,10 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:background="@color/dark_green"
+            android:background="@color/primary_green"
             android:textColor="@color/white"
             android:textSize="20sp"
-            android:text=""
+            android:textStyle="bold"
             app:layout_constraintTop_toBottomOf="@id/product_image"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>

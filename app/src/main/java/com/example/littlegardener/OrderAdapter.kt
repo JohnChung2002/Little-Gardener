@@ -18,21 +18,26 @@ class OrderAdapter(private val orderItems: List<Pair<String, Pair<Pair<String, S
 
     override fun onBindViewHolder(holder: ViewOrder, position: Int) {
         val orderItem = orderItems[position]
+        holder.itemView.setOnLongClickListener(null)
         if (viewType != "view_orders") {
-            holder.itemView.setOnLongClickListener {
-                AlertDialog.Builder(holder.itemView.context)
-                    .setTitle("Cancel order?")
-                    .setMessage("Are you sure you want to cancel this order?")
-                    .setPositiveButton("Yes") { _, _ ->
-                        FirestoreHelper.updateOrderStatus(
-                            orderItem.second.first.first,
-                            orderItem.first,
-                            "Cancelled"
-                        )
+            FirestoreHelper.getOrderStatus(orderItem.first) { status ->
+                if (status != "Completed" && status != "Cancelled") {
+                    holder.itemView.setOnLongClickListener {
+                        AlertDialog.Builder(holder.itemView.context)
+                            .setTitle("Cancel order?")
+                            .setMessage("Are you sure you want to cancel this order?")
+                            .setPositiveButton("Yes") { _, _ ->
+                                FirestoreHelper.updateOrderStatus(
+                                    orderItem.second.first.first,
+                                    orderItem.first,
+                                    "Cancelled"
+                                )
+                            }
+                            .setNegativeButton("No") { _, _ -> }
+                            .show()
+                        true
                     }
-                    .setNegativeButton("No") { _, _ -> }
-                    .show()
-                true
+                }
             }
         }
         holder.bind(orderItem, viewType)
@@ -55,6 +60,9 @@ class OrderAdapter(private val orderItems: List<Pair<String, Pair<Pair<String, S
 
         fun bind(orderItem:  Pair<String, Pair<Pair<String, String>, HashMap<String, Int>>>, viewType: String) {
             orderViewType = viewType
+            orderId = orderItem.first
+            buyerId = orderItem.second.first.first
+            var totalPrice = 0.0
             if (viewType != "view_orders") {
                 FirestoreHelper.getAccountInfo(orderItem.second.first.first) { name, _ ->
                     itemView.findViewById<TextView>(R.id.cart_seller_name).text = name
@@ -64,9 +72,11 @@ class OrderAdapter(private val orderItems: List<Pair<String, Pair<Pair<String, S
                     itemView.findViewById<TextView>(R.id.cart_seller_name).text = name
                 }
             }
-            orderId = orderItem.first
-            buyerId = orderItem.second.first.first
-            var totalPrice = 0.0
+            val orderText = "Order ID: $orderId"
+            itemView.findViewById<TextView>(R.id.order_id).text = orderText
+            FirestoreHelper.getOrderTimestamp(orderId) { timestamp ->
+                itemView.findViewById<TextView>(R.id.timestamp).text = FirestoreHelper.getTimeInTimeZone(itemView.context, timestamp)
+            }
             cartRecyclerView = itemView.findViewById(R.id.cart_item_recycler_view)
             cartRecyclerView.layoutManager = LinearLayoutManager(itemView.context)
             cartItemAdapter = CartItemAdapter(cartProductItems, orderId, "order")
@@ -135,10 +145,14 @@ class OrderAdapter(private val orderItems: List<Pair<String, Pair<Pair<String, S
                     "Pending" -> { prepareOrder() }
                     "Preparing" -> { readyOrder() }
                     "Ready For Pickup" -> { completeOrder() }
-                    else -> { checkOutButton.visibility = View.GONE }
+                    else -> {
+                        checkOutButton.visibility = View.INVISIBLE
+                        checkOutButton.setOnClickListener(null)
+                    }
                 }
             } else {
-                checkOutButton.visibility = View.GONE
+                checkOutButton.visibility = View.INVISIBLE
+                checkOutButton.setOnClickListener(null)
             }
         }
 

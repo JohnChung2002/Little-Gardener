@@ -3,10 +3,10 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@drawable/background"
     tools:context=".HomeFragment"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/background">
 
     <EditText
         android:id="@+id/edit_text_search"
@@ -16,6 +16,7 @@
         android:layout_marginTop="8dp"
         android:background="@drawable/edit_text_shape"
         android:hint="@string/search"
+        android:textColor="@color/black"
         android:imeOptions="actionSearch"
         android:inputType="text"
         android:minHeight="48dp"

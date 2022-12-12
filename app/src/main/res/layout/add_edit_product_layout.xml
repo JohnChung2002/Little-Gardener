@@ -11,10 +11,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <Toolbar
+        <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            app:titleTextColor="@color/black"
             android:background="@drawable/main_gradient"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -46,6 +47,7 @@
             android:layout_marginHorizontal="16dp"
             android:padding="12dp"
             android:inputType="text"
+            android:textSize="16sp"
             android:importantForAutofill="no" />
 
         <TextView
@@ -74,6 +76,7 @@
             android:layout_marginHorizontal="16dp"
             android:padding="12dp"
             android:inputType="numberDecimal"
+            android:textSize="16sp"
             android:importantForAutofill="no" />
 
         <TextView
@@ -101,6 +104,7 @@
             android:layout_marginTop="8dp"
             android:layout_marginHorizontal="16dp"
             android:padding="12dp"
+            android:textSize="16sp"
             android:inputType="text"
             android:importantForAutofill="no" />
 
@@ -127,6 +131,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginTop="8dp"
+            android:textSize="16sp"
             android:layout_marginHorizontal="16dp"
             android:paddingHorizontal="12dp"
             android:paddingVertical="12dp"
@@ -168,15 +173,18 @@
             app:layout_constraintBottom_toBottomOf="@id/add_image_icon"
             app:layout_constraintEnd_toEndOf="parent"/>
 
-        <Button
+        <android.widget.Button
             android:id="@+id/submit_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginVertical="16dp"
             android:layout_marginHorizontal="16dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/add_image_icon"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:textAllCaps="false"
+            android:background="@drawable/button"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -5,13 +5,13 @@ import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
 import android.widget.Spinner
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.firestore.ListenerRegistration
 
 class ManageOrdersActivity : AppCompatActivity() {
     private lateinit var type: String
+    private lateinit var filter: String
     private lateinit var snapshotListener: ListenerRegistration
     private lateinit var orderAdapter: OrderAdapter
     private lateinit var filterSpinner: Spinner
@@ -36,27 +36,31 @@ class ManageOrdersActivity : AppCompatActivity() {
         }
         val cartRecyclerView = findViewById<RecyclerView>(R.id.orders_recycler_view)
         cartRecyclerView.layoutManager = LinearLayoutManager(this)
-        cartRecyclerView.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
+        filter = filterSpinner.selectedItem.toString()
         orderAdapter = OrderAdapter(orderList, type)
         cartRecyclerView.adapter = orderAdapter
     }
 
     private fun loadListeners() {
+        filter = filterSpinner.selectedItem.toString()
         when (type) {
             "self_manage_orders" -> {
-                loadManageSelfOrders(filterSpinner.selectedItem.toString())
+                loadManageSelfOrders()
             }
             "all_manage_orders" -> {
-                loadManageAllOrders(filterSpinner.selectedItem.toString())
+                loadManageAllOrders()
             }
             else -> {
-                loadUserOrders(filterSpinner.selectedItem.toString())
+                loadUserOrders()
             }
         }
     }
 
-    private fun loadUserOrders(status: String) {
-        val db = FirestoreHelper.getOrdersCollection().whereEqualTo("buyer", AuthenticationHelper.getCurrentUserUid()).whereEqualTo("status", status)
+    private fun loadUserOrders() {
+        val db = FirestoreHelper.getOrdersCollection().whereEqualTo("buyer", AuthenticationHelper.getCurrentUserUid()).whereEqualTo("status", filter)
+        if (this::snapshotListener.isInitialized) {
+            snapshotListener.remove()
+        }
         snapshotListener = db.addSnapshotListener { snapshot, error ->
             if (error != null) {
                 return@addSnapshotListener
@@ -78,8 +82,11 @@ class ManageOrdersActivity : AppCompatActivity() {
         }
     }
 
-    private fun loadManageSelfOrders(status: String) {
-        val db = FirestoreHelper.getOrdersCollection().whereEqualTo("seller", AuthenticationHelper.getCurrentUserUid()).whereEqualTo("status", status)
+    private fun loadManageSelfOrders() {
+        val db = FirestoreHelper.getOrdersCollection().whereEqualTo("seller", AuthenticationHelper.getCurrentUserUid()).whereEqualTo("status", filter)
+        if (this::snapshotListener.isInitialized) {
+            snapshotListener.remove()
+        }
         snapshotListener = db.addSnapshotListener { snapshot, error ->
             if (error != null) {
                 return@addSnapshotListener
@@ -101,8 +108,11 @@ class ManageOrdersActivity : AppCompatActivity() {
         }
     }
 
-    private fun loadManageAllOrders(status: String) {
-        snapshotListener = FirestoreHelper.getOrdersCollection().whereEqualTo("status", status).addSnapshotListener { snapshot, error ->
+    private fun loadManageAllOrders() {
+        if (this::snapshotListener.isInitialized) {
+            snapshotListener.remove()
+        }
+        snapshotListener = FirestoreHelper.getOrdersCollection().whereEqualTo("status", filter).addSnapshotListener { snapshot, error ->
             if (error != null) {
                 return@addSnapshotListener
             }

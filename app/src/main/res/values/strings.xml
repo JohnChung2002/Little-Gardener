@@ -12,15 +12,6 @@
         <item>Completed</item>
         <item>Cancelled</item>
     </string-array>
-    <string name="title_activity_full_screen_image">FullScreenImageActivity</string>
-    <!-- Strings used for fragments for navigation -->
-    <string name="first_fragment_label">First Fragment</string>
-    <string name="second_fragment_label">Second Fragment</string>
-    <string name="next">Next</string>
-    <string name="previous">Previous</string>
-
-    <string name="hello_first_fragment">Hello first fragment</string>
-    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
     <string name="add_product">Add Product</string>
     <string name="update_product">Update Product</string>
     <string name="filter_orders">Filter Orders</string>
@@ -33,9 +24,9 @@
     <string name="add_image_icon">add_image_icon</string>
     <string name="manage_customer_orders_all">Manage Customer Orders (All)</string>
     <string name="manage_customer_orders_self">Manage Customer Orders (Self)</string>
-    <string name="delete_product_listing">Delete Product Listing</string>
-    <string name="edit_product_listing">Edit Product Listing</string>
-    <string name="create_product_listing">Create Product Listing</string>
+    <string name="delete_product_listing">Delete Product\nListing</string>
+    <string name="edit_product_listing">Edit Product\nListing</string>
+    <string name="create_product_listing">Create Product\nListing</string>
     <string name="checkout">Checkout</string>
     <string name="total_price">Total Price:</string>
     <string name="change_password">Change Password</string>

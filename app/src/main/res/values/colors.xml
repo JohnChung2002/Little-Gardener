@@ -8,6 +8,7 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="primary_dark">#E65100</color>
+    <color name="lighter_gray">#d8d8d8</color>
     <color name="dark_gray">#b4b4b4</color>
     <color name="light_gray">#ececec</color>
     <color name="darker_gray">#5A5A5A</color>
@@ -15,6 +16,15 @@
     <color name="sea_blue">#2962FF</color>
     <color name="dark_green">#4CAF50</color>
     <color name="light_green">#8BC34A</color>
+    <color name="primary_green">#01CA56</color>
     <color name="navy_blue">#FF000080</color>
     <color name="red">#FF0000</color>
+    <color name="transparent">#00FF0000</color>
+    <color name="alpha_black">#36000000</color>
+    <color name="gradient_green_start">#A1EC9A</color>
+    <color name="gradient_green_end">#59E28B</color>
+    <color name="alpha_gray">#40FFFFFF</color>
+    <color name="chat_background">#9FF5FFF6</color>
+    <color name="message_receive">#C9FFD4</color>
+    <color name="message_send">#82E894</color>
 </resources>

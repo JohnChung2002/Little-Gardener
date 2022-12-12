@@ -7,7 +7,6 @@ import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
@@ -38,6 +37,7 @@ class CartAdapter(private val cartItems: List<Pair<String, HashMap<String, Int>>
                 itemView.findViewById<TextView>(R.id.cart_seller_name).text = name
             }
             var totalPrice = 0.0
+            itemView.findViewById<TextView>(R.id.order_id).visibility = View.GONE
             cartRecyclerView = itemView.findViewById(R.id.cart_item_recycler_view)
             cartRecyclerView.layoutManager = LinearLayoutManager(itemView.context)
             cartItemAdapter = CartItemAdapter(cartProductItems, cartItem.first, "cart")

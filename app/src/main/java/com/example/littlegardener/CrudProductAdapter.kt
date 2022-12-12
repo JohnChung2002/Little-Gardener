@@ -64,7 +64,7 @@ class CrudProductAdapter(private val type: String, private val productList: List
     class ViewProduct(itemView: View): RecyclerView.ViewHolder(itemView) {
         fun bind(product: Product) {
             itemView.findViewById<TextView>(R.id.product_name).text = product.name
-            val price = "RM %,.2f".format(product.price)
+            val price = "RM%,.2f".format(product.price)
             itemView.findViewById<TextView>(R.id.product_price).text = price
             itemView.findViewById<TextView>(R.id.product_category).text = product.category
             Glide.with(itemView.context)

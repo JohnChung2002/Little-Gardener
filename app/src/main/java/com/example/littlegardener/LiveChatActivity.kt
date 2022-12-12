@@ -5,21 +5,20 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.EditText
 import android.widget.ImageView
-import android.widget.Toast
-import android.widget.Toolbar
+import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
-import com.google.firebase.firestore.ListenerRegistration
 
 class LiveChatActivity : AppCompatActivity() {
     private lateinit var type: String
     private lateinit var chatItem: ChatItem
-    private lateinit var toolbar: Toolbar
+    private lateinit var titleTextView: TextView
     private lateinit var chatAdapter: ChatAdapter
     private lateinit var recyclerView: RecyclerView
     private lateinit var addMessageImageView: ImageView
@@ -59,8 +58,11 @@ class LiveChatActivity : AppCompatActivity() {
     }
 
     private fun initUI() {
-        toolbar = findViewById(R.id.toolbar)
-        toolbar.title = chatItem.name
+        titleTextView = findViewById(R.id.title)
+        titleTextView.text = chatItem.name
+        if (chatItem.image != "") {
+            Glide.with(this).load(chatItem.image).into(findViewById(R.id.user_image))
+        }
         recyclerView = findViewById(R.id.live_chat_recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(this)
         chatAdapter = ChatAdapter(messageHashmap)
@@ -131,7 +133,7 @@ class LiveChatActivity : AppCompatActivity() {
         eventListener.let {
             RealtimeDBHelper.getChatReference(chatItem.id).removeEventListener(it)
         }
-        super.onBackPressed()
+        finish()
     }
 
     private fun sendMessage() {

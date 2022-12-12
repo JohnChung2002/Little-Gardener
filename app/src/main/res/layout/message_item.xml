@@ -41,6 +41,7 @@
         android:layout_marginStart="16dp"
         android:textSize="16sp"
         android:textStyle="bold"
+        android:textColor="@color/black"
         app:layout_constraintStart_toEndOf="@id/user_icon"
         app:layout_constraintTop_toTopOf="@id/user_icon"
         app:layout_constraintBottom_toBottomOf="@id/user_icon" />

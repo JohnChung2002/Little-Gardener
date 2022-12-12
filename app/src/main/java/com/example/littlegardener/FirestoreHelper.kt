@@ -275,6 +275,22 @@ class FirestoreHelper {
             addNotification(buyerId, Notification(title = "Order is $status", description = "Your order status has been changed to $status. Please check your order list.", timestamp = getCurrTimestamp()))
         }
 
+        fun getOrderStatus(orderId: String, listener: (String) -> Unit) {
+            getOrdersCollection().document(orderId).get().addOnSuccessListener { snapshot ->
+                if (snapshot.exists()) {
+                    listener.invoke(snapshot.get("status") as String)
+                }
+            }
+        }
+
+        fun getOrderTimestamp(orderId: String, listener: (String) -> Unit) {
+            getOrdersCollection().document(orderId).get().addOnSuccessListener { snapshot ->
+                if (snapshot.exists()) {
+                    listener.invoke(snapshot.get("timestamp") as String)
+                }
+            }
+        }
+
         fun initNotification(id: String, listener: (Boolean) -> Unit) {
             val db = getNotificationCollection().document(id)
             db.get().addOnSuccessListener {

@@ -10,84 +10,156 @@
     android:textAlignment="center"
     android:alignmentMode="alignMargins">
 
-    <TextView
-        android:id="@+id/create_product"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardView1"
         android:layout_width="0dp"
-        android:layout_columnWeight="1"
         android:layout_height="wrap_content"
-        android:background="@drawable/rounded_shape"
-        android:paddingStart="40dp"
-        android:paddingTop="40dp"
-        android:paddingEnd="10dp"
-        android:paddingBottom="10dp"
+        app:cardCornerRadius="10dp"
         android:layout_margin="8dp"
-        android:text="@string/create_product_listing"
-        android:textStyle="bold"
-        android:textSize="16sp"
-        android:textAlignment="textEnd" />
+        android:layout_columnWeight="1"
+        android:background="@drawable/lawn"
+        android:elevation="10dp">
 
-    <TextView
-        android:id="@+id/edit_product"
-        android:layout_width="0dp"
-        android:layout_columnWeight="1"
-        android:layout_height="wrap_content"
-        android:background="@drawable/rounded_shape"
-        android:paddingStart="40dp"
-        android:paddingTop="40dp"
-        android:paddingEnd="10dp"
-        android:paddingBottom="10dp"
-        android:layout_margin="8dp"
-        android:text="@string/edit_product_listing"
-        android:textStyle="bold"
-        android:textSize="16sp"
-        android:textAlignment="textEnd" />
+        <ImageView
+            android:src="@drawable/lawn"
+            android:layout_width="wrap_content"
+            android:layout_height="80dp"
+            android:scaleType="fitXY"
+            android:elevation="5dp"/>
 
-    <TextView
-        android:id="@+id/delete_product"
-        android:layout_width="0dp"
-        android:layout_columnWeight="1"
-        android:layout_height="wrap_content"
-        android:background="@drawable/rounded_shape"
-        android:paddingStart="40dp"
-        android:paddingTop="40dp"
-        android:paddingEnd="10dp"
-        android:paddingBottom="10dp"
-        android:layout_margin="8dp"
-        android:text="@string/delete_product_listing"
-        android:textStyle="bold"
-        android:textSize="16sp"
-        android:textAlignment="textEnd" />
+        <TextView
+            android:id="@+id/create_product"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:padding="10dp"
+            android:text="@string/create_product_listing"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:elevation="5dp"
+            android:textColor="@color/white"
+            android:gravity="bottom|end" />
+    </androidx.cardview.widget.CardView>
 
-    <TextView
-        android:id="@+id/manage_self_orders"
-        android:layout_width="0dp"
-        android:layout_columnWeight="1"
-        android:layout_height="wrap_content"
-        android:background="@drawable/rounded_shape"
-        android:paddingStart="40dp"
-        android:paddingTop="40dp"
-        android:paddingEnd="10dp"
-        android:paddingBottom="10dp"
-        android:layout_margin="8dp"
-        android:text="@string/manage_customer_orders_self"
-        android:textStyle="bold"
-        android:textSize="16sp"
-        android:textAlignment="textEnd" />
 
-    <TextView
-        android:id="@+id/manage_all_orders"
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardView2"
         android:layout_width="0dp"
-        android:layout_columnWeight="1"
         android:layout_height="wrap_content"
-        android:background="@drawable/rounded_shape"
-        android:paddingStart="40dp"
-        android:paddingTop="40dp"
-        android:paddingEnd="10dp"
-        android:paddingBottom="10dp"
+        app:cardCornerRadius="10dp"
         android:layout_margin="8dp"
-        android:text="@string/manage_customer_orders_all"
-        android:textStyle="bold"
-        android:textSize="16sp"
-        android:textAlignment="textEnd" />
+        android:layout_columnWeight="1"
+        android:background="@drawable/lawn"
+        android:elevation="10dp">
+
+        <ImageView
+            android:src="@drawable/lawn"
+            android:layout_width="wrap_content"
+            android:layout_height="80dp"
+            android:scaleType="fitXY"
+            android:elevation="5dp"/>
+
+        <TextView
+            android:id="@+id/edit_product"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:padding="10dp"
+            android:text="@string/edit_product_listing"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:elevation="5dp"
+            android:textColor="@color/white"
+            android:gravity="bottom|end" />
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardView3"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="10dp"
+        android:layout_margin="8dp"
+        android:layout_columnWeight="1"
+        android:background="@drawable/lawn"
+        android:elevation="10dp">
+
+        <ImageView
+            android:src="@drawable/lawn"
+            android:layout_width="wrap_content"
+            android:layout_height="80dp"
+            android:scaleType="fitXY"
+            android:elevation="5dp"/>
+
+        <TextView
+            android:id="@+id/delete_product"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:padding="10dp"
+            android:text="@string/delete_product_listing"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:elevation="5dp"
+            android:textColor="@color/white"
+            android:gravity="bottom|end" />
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardView4"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="10dp"
+        android:layout_margin="8dp"
+        android:layout_columnWeight="1"
+        android:background="@drawable/lawn"
+        android:elevation="10dp">
+
+        <ImageView
+            android:src="@drawable/lawn"
+            android:layout_width="wrap_content"
+            android:layout_height="80dp"
+            android:scaleType="fitXY"
+            android:elevation="5dp"/>
+
+        <TextView
+            android:id="@+id/manage_self_orders"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:padding="10dp"
+            android:text="@string/manage_customer_orders_self"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:elevation="5dp"
+            android:textColor="@color/white"
+            android:gravity="bottom|end" />
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardView5"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="10dp"
+        android:layout_margin="8dp"
+        android:layout_columnWeight="1"
+        android:background="@drawable/lawn"
+        android:elevation="10dp">
+
+        <ImageView
+            android:src="@drawable/lawn"
+            android:layout_width="wrap_content"
+            android:layout_height="80dp"
+            android:scaleType="fitXY"
+            android:elevation="5dp"/>
+
+        <TextView
+            android:id="@+id/manage_all_orders"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:padding="10dp"
+            android:text="@string/manage_customer_orders_all"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:elevation="5dp"
+            android:textColor="@color/white"
+            android:gravity="bottom|end" />
+    </androidx.cardview.widget.CardView>
 
 </GridLayout>

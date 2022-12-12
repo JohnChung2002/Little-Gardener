@@ -8,12 +8,13 @@
     android:background="@drawable/background"
     tools:context=".EditProfileActivity">
 
-    <Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/main_gradient"
         app:layout_constraintTop_toTopOf="parent"
+        app:titleTextColor="@color/black"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
