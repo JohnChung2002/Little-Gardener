@@ -14,7 +14,7 @@
     </string-array>
     <string name="add_product">Add Product</string>
     <string name="update_product">Update Product</string>
-    <string name="filter_orders">Filter Orders</string>
+    <string name="filter">Filter</string>
     <string name="category">Category</string>
     <string name="description">Description</string>
     <string name="product_images">Product Images</string>
@@ -22,11 +22,8 @@
     <string name="price">Price</string>
     <string name="name">Name</string>
     <string name="add_image_icon">add_image_icon</string>
-    <string name="manage_customer_orders_all">Manage Customer Orders (All)</string>
-    <string name="manage_customer_orders_self">Manage Customer Orders (Self)</string>
-    <string name="delete_product_listing">Delete Product\nListing</string>
-    <string name="edit_product_listing">Edit Product\nListing</string>
-    <string name="create_product_listing">Create Product\nListing</string>
+    <string name="manage_customer_orders">Manage Customer Orders</string>
+    <string name="manage_product_listing">Manage Product\nListing</string>
     <string name="checkout">Checkout</string>
     <string name="total_price">Total Price:</string>
     <string name="change_password">Change Password</string>
@@ -64,4 +61,8 @@
     <string name="product_categories">Product Categories</string>
     <string name="price_title">Price:</string>
     <string name="category_title">Category:</string>
+    <string name="my_orders">My Orders</string>
+    <string name="manage_my_orders">Manage My Orders</string>
+    <string name="manage_all_orders">Manage All Orders</string>
+    <string name="channel_id">Little Gardener</string>
 </resources>

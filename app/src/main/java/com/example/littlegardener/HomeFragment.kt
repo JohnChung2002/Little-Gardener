@@ -67,34 +67,16 @@ class HomeFragment : Fragment() {
     }
 
     private fun loadAdminOptions(view: View) {
-        val addProductButton = view.findViewById<TextView>(R.id.create_product)
-        addProductButton.setOnClickListener {
+        val manageProductButton = view.findViewById<TextView>(R.id.manage_product)
+        manageProductButton.setOnClickListener {
             val intent = Intent(context, CrudActivity::class.java)
-            intent.putExtra("type", "add")
+            intent.putExtra("type", "manage")
             startActivity(intent)
         }
-        val editProductButton = view.findViewById<TextView>(R.id.edit_product)
-        editProductButton.setOnClickListener {
-            val intent = Intent(context, CrudActivity::class.java)
-            intent.putExtra("type", "edit_list")
-            startActivity(intent)
-        }
-        val deleteProductButton = view.findViewById<TextView>(R.id.delete_product)
-        deleteProductButton.setOnClickListener {
-            val intent = Intent(context, CrudActivity::class.java)
-            intent.putExtra("type", "delete_list")
-            startActivity(intent)
-        }
-        val manageSelfOrder = view.findViewById<TextView>(R.id.manage_self_orders)
-        manageSelfOrder.setOnClickListener {
-            val intent = Intent(context, ManageOrdersActivity::class.java)
-            intent.putExtra("type", "self_manage_orders")
-            startActivity(intent)
-        }
-        val manageAllOrder = view.findViewById<TextView>(R.id.manage_all_orders)
+        val manageAllOrder = view.findViewById<TextView>(R.id.manage_orders)
         manageAllOrder.setOnClickListener {
             val intent = Intent(context, ManageOrdersActivity::class.java)
-            intent.putExtra("type", "all_manage_orders")
+            intent.putExtra("type", "manage_orders")
             startActivity(intent)
         }
     }

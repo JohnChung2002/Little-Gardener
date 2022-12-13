@@ -35,7 +35,7 @@ class LiveChatActivity : AppCompatActivity() {
         if (type != "exists") {
             FirestoreHelper.getAccountInfo(chatItem.receiver) { name, image ->
                 chatItem.name = name
-                println(image)
+                chatItem.image = image
                 FirestoreHelper.checkIfChatExists(chatItem.receiver) { chatId ->
                     if (chatId != "") {
                         chatItem.id = chatId
@@ -78,12 +78,17 @@ class LiveChatActivity : AppCompatActivity() {
             intent.type = "image/*"
             attachImage.launch(intent)
         }
+        recyclerView.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
+            recyclerView.scrollToPosition(chatAdapter.itemCount - 1)
+        }
         messageEditText.addTextChangedListener {
             if (it.toString().isNotEmpty()) {
+                sendButton.setImageResource(R.drawable.outline_send_24)
                 sendButton.setOnClickListener {
                     sendMessage()
                 }
             } else {
+                sendButton.setImageResource(R.drawable.outline_send_gray_24)
                 sendButton.setOnClickListener(null)
             }
         }
@@ -101,7 +106,7 @@ class LiveChatActivity : AppCompatActivity() {
                 }
                 RealtimeDBHelper.setMessageStatus(chatItem.id, AuthenticationHelper.getCurrentUserUid(), "Read")
                 chatAdapter.notifyDataSetChanged()
-                recyclerView.scrollToPosition(messageHashmap.size - 1)
+                recyclerView.scrollToPosition(chatAdapter.itemCount - 1)
             }
 
             override fun onCancelled(error: DatabaseError) {

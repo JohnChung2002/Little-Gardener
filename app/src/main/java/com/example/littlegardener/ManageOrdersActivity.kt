@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
 import android.widget.Spinner
+import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.firestore.ListenerRegistration
@@ -44,10 +45,7 @@ class ManageOrdersActivity : AppCompatActivity() {
     private fun loadListeners() {
         filter = filterSpinner.selectedItem.toString()
         when (type) {
-            "self_manage_orders" -> {
-                loadManageSelfOrders()
-            }
-            "all_manage_orders" -> {
+            "manage_orders" -> {
                 loadManageAllOrders()
             }
             else -> {
@@ -57,6 +55,7 @@ class ManageOrdersActivity : AppCompatActivity() {
     }
 
     private fun loadUserOrders() {
+        findViewById<Toolbar>(R.id.toolbar).title = getString(R.string.my_orders)
         val db = FirestoreHelper.getOrdersCollection().whereEqualTo("buyer", AuthenticationHelper.getCurrentUserUid()).whereEqualTo("status", filter)
         if (this::snapshotListener.isInitialized) {
             snapshotListener.remove()
@@ -82,33 +81,8 @@ class ManageOrdersActivity : AppCompatActivity() {
         }
     }
 
-    private fun loadManageSelfOrders() {
-        val db = FirestoreHelper.getOrdersCollection().whereEqualTo("seller", AuthenticationHelper.getCurrentUserUid()).whereEqualTo("status", filter)
-        if (this::snapshotListener.isInitialized) {
-            snapshotListener.remove()
-        }
-        snapshotListener = db.addSnapshotListener { snapshot, error ->
-            if (error != null) {
-                return@addSnapshotListener
-            }
-            if (snapshot != null) {
-                orderList.clear()
-                for (document in snapshot.documents) {
-                    val buyer = document.data!!["buyer"] as String
-                    val seller = document.data!!["seller"] as String
-                    val items: HashMap<String, Int> = hashMapOf()
-                    for (product in document.data!!["products"] as HashMap<String, Any>) {
-                        val prod = product.value as HashMap<String, Any>
-                        items[prod["id"] as String] = (prod["quantity"] as Long).toInt()
-                    }
-                    orderList.add(Pair(document.id, Pair(Pair(buyer, seller), items)))
-                }
-            }
-            orderAdapter.notifyDataSetChanged()
-        }
-    }
-
     private fun loadManageAllOrders() {
+        findViewById<Toolbar>(R.id.toolbar).title = getString(R.string.manage_all_orders)
         if (this::snapshotListener.isInitialized) {
             snapshotListener.remove()
         }

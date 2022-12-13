@@ -1,6 +1,9 @@
 package com.example.littlegardener
 
+import android.app.NotificationManager
 import android.content.Context
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import com.google.firebase.firestore.*
 import java.time.Instant
 import java.time.LocalDateTime
@@ -216,7 +219,7 @@ class FirestoreHelper {
             data["status"] = "Pending"
             data["timestamp"] = getCurrTimestamp()
             db.add(data).addOnSuccessListener {
-                addNotification(product.seller, Notification(title = "New Order", description = "You have a new order. Please check the manage product list", timestamp = getCurrTimestamp()))
+                addNotification(product.seller, Notification(title = "New Order", description = "You have a new order. Please check the manage product list", timestamp = getCurrTimestamp(), status = "Unread"))
                 listener.invoke(true)
             }.addOnFailureListener {
                 listener.invoke(false)
@@ -253,7 +256,7 @@ class FirestoreHelper {
                                     data["price"] = totalPrice
                                     getCurrCartDocument().update(seller, FieldValue.delete())
                                     getOrdersCollection().add(data).addOnSuccessListener {
-                                        addNotification(seller, Notification(title = "New Order", description = "You have a new order. Please check the manage product list", timestamp = getCurrTimestamp()))
+                                        addNotification(seller, Notification(title = "New Order", description = "You have a new order. Please check the manage product list", timestamp = getCurrTimestamp(), status = "Unread"))
                                         listener.invoke(true)
                                     }.addOnFailureListener {
                                         listener.invoke(false)
@@ -272,7 +275,7 @@ class FirestoreHelper {
 
         fun updateOrderStatus(buyerId: String, orderId: String, status: String) {
             getOrdersCollection().document(orderId).update("status", status)
-            addNotification(buyerId, Notification(title = "Order is $status", description = "Your order status has been changed to $status. Please check your order list.", timestamp = getCurrTimestamp()))
+            addNotification(buyerId, Notification(title = "Order is $status", description = "Order status for order $orderId has been changed to $status. Please check your order list.", timestamp = getCurrTimestamp(), status = "Unread"))
         }
 
         fun getOrderStatus(orderId: String, listener: (String) -> Unit) {
@@ -304,6 +307,26 @@ class FirestoreHelper {
             }
         }
 
+        fun setNotificationRead(userId: String, notification: Notification) {
+            getNotificationCollection().document(userId).update("notifications", FieldValue.arrayRemove(notification)).addOnSuccessListener {
+                notification.status = "Read"
+                getNotificationCollection().document(userId).update("notifications", FieldValue.arrayUnion(notification))
+            }
+        }
+
+        fun triggerNotification(context: Context, notification: Notification) {
+            var builder = NotificationCompat.Builder(context, context.getString(R.string.channel_id))
+                .setSmallIcon(R.drawable.notification_icon)
+                .setContentTitle(notification.title)
+                .setContentText(notification.description)
+                .setDefaults(NotificationCompat.DEFAULT_ALL)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setVibrate(longArrayOf(1000))
+            with(NotificationManagerCompat.from(context)) {
+                notify(0, builder.build())
+            }
+        }
+
         fun getNotificationCollection(): CollectionReference {
             return getDatabase().collection("notifications")
         }
@@ -318,7 +341,8 @@ class FirestoreHelper {
                         "notifications" to listOf(hashMapOf(
                             "title" to notification.title,
                             "description" to notification.description,
-                            "timestamp" to notification.timestamp
+                            "timestamp" to notification.timestamp,
+                            "status" to notification.status
                         ))
                     )
                     db.set(data)

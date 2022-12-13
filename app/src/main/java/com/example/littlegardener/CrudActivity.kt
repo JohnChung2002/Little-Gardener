@@ -4,6 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewStub
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
@@ -15,6 +16,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.smarteist.autoimageslider.SliderView
 
 
@@ -41,6 +43,7 @@ class CrudActivity : AppCompatActivity(), CrudProductAdapter.OnProductClickListe
     private lateinit var sliderView: SliderView
     private lateinit var imageSliderAdapter: ImageSliderAdapter
     private lateinit var productOption: BottomNavigationView
+    private lateinit var addProductButton: FloatingActionButton
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,15 +58,22 @@ class CrudActivity : AppCompatActivity(), CrudProductAdapter.OnProductClickListe
     private fun initUI() {
         rootLayout = findViewById(R.id.root_layout)
         viewStub = findViewById(R.id.view_stub)
-        viewStub.layoutResource =
-            when (type) {
-                "add" -> R.layout.add_edit_product_layout
-                else -> R.layout.list_product_layout
-            }
+        viewStub.layoutResource = R.layout.list_product_layout
         viewStub.inflate()
-        when (type) {
-            "add" -> loadAddProductDetails()
-            else -> loadListProductDetails(type.split("_")[0])
+        loadListProductDetails()
+        loadAddButton()
+    }
+
+    private fun loadAddButton() {
+        addProductButton = findViewById(R.id.add_product_icon)
+        if (type == "view_list") {
+            addProductButton.visibility = View.GONE
+            addProductButton.setOnClickListener(null)
+        } else {
+            addProductButton.visibility = View.VISIBLE
+            addProductButton.setOnClickListener {
+                onProductAddClick()
+            }
         }
     }
 
@@ -147,7 +157,7 @@ class CrudActivity : AppCompatActivity(), CrudProductAdapter.OnProductClickListe
             FirestoreHelper.addProduct(product)
         }
         Toast.makeText(this, "Product added", Toast.LENGTH_SHORT).show()
-        finish()
+        finishEditLayout()
     }
 
     private val attachImage = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -197,7 +207,7 @@ class CrudActivity : AppCompatActivity(), CrudProductAdapter.OnProductClickListe
         finishEditLayout()
     }
 
-    private fun loadListProductDetails(type: String) {
+    private fun loadListProductDetails() {
         productListRecyclerView = findViewById(R.id.product_recycler_view)
         productListRecyclerView.layoutManager = GridLayoutManager(this, 2)
         productAdapter = CrudProductAdapter(type, productList)
@@ -206,7 +216,7 @@ class CrudActivity : AppCompatActivity(), CrudProductAdapter.OnProductClickListe
             customTitle("${category.replaceFirstChar {it.uppercase()}} Products")
             loadCategoriesProductListener()
         } else {
-            setTitle()
+            customTitle("${type.replaceFirstChar {it.uppercase()}} Products")
             loadProductListener()
         }
     }
@@ -296,6 +306,14 @@ class CrudActivity : AppCompatActivity(), CrudProductAdapter.OnProductClickListe
         }
     }
 
+    private fun onProductAddClick() {
+        type = "add"
+        rootLayout.removeAllViews()
+        scrollLayout = LayoutInflater.from(this).inflate(R.layout.add_edit_product_layout, rootLayout, false) as ScrollView
+        rootLayout.addView(scrollLayout)
+        loadAddProductDetails()
+    }
+
     override fun onProductEditClick(product: Product) {
         rootLayout.removeAllViews()
         scrollLayout = LayoutInflater.from(this).inflate(R.layout.add_edit_product_layout, rootLayout, false) as ScrollView
@@ -318,11 +336,12 @@ class CrudActivity : AppCompatActivity(), CrudProductAdapter.OnProductClickListe
     }
 
     private fun finishEditLayout() {
-        type = "edit_list"
+        type = "manage"
         rootLayout.removeAllViews()
         viewLayout = LayoutInflater.from(this).inflate(R.layout.list_product_layout, rootLayout, false) as ConstraintLayout
         rootLayout.addView(viewLayout)
-        loadListProductDetails("edit")
+        loadListProductDetails()
+        loadAddButton()
     }
 
     private fun finishViewLayout() {
@@ -330,19 +349,20 @@ class CrudActivity : AppCompatActivity(), CrudProductAdapter.OnProductClickListe
         rootLayout.removeAllViews()
         viewLayout = LayoutInflater.from(this).inflate(R.layout.list_product_layout, rootLayout, false) as ConstraintLayout
         rootLayout.addView(viewLayout)
-        loadListProductDetails("view")
+        loadListProductDetails()
     }
 
     override fun onBackPressed() {
         when (type) {
-            "edit" -> {
+            "add", "edit" -> {
+                imagesList.clear()
                 finishEditLayout()
             }
             "view" -> {
                 finishViewLayout()
             }
             else -> {
-                super.onBackPressed()
+                finish()
             }
         }
     }

@@ -26,7 +26,7 @@ class StorageHelper {
             }
         }
 
-        fun uploadImages(context: Context, uriList: List<Uri>, listener: (List<String>) -> Unit) {
+        fun uploadImages(context: Context, uriList: MutableList<Uri>, listener: (List<String>) -> Unit) {
             val storage = getStorage()
             val images = mutableListOf<String>()
             for (uri in uriList) {
@@ -41,6 +41,7 @@ class StorageHelper {
                         ref.downloadUrl.addOnSuccessListener {
                             images.add(it.toString())
                             if (images.size == uriList.size) {
+                                uriList.clear()
                                 listener.invoke(images)
                             }
                         }

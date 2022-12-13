@@ -17,7 +17,6 @@ import com.google.firebase.storage.FirebaseStorage
 class ChatFragment : Fragment() {
     private lateinit var messageAdapter: MessageAdapter
     private var chatRecyclerList: MutableList<ChatItem> = mutableListOf()
-    private lateinit var snapshotListener: ListenerRegistration
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,7 +37,7 @@ class ChatFragment : Fragment() {
 
     private fun realtimeDBListener() {
         val db = FirestoreHelper.getCurrUserDocument()
-        snapshotListener = db.addSnapshotListener { snapshot, e ->
+        db.addSnapshotListener { snapshot, e ->
             if (e != null) {
                 return@addSnapshotListener
             }
@@ -46,8 +45,11 @@ class ChatFragment : Fragment() {
             chatRecyclerList.clear()
             for (chatId in chats) {
                 RealtimeDBHelper.getChatInfo(chatId) { chatItem ->
-                    println("Add--- $chatItem")
                     chatRecyclerList.add(chatItem)
+                    if (chatItem.status == "Unread") {
+                        val notification = Notification(title = "New message", description = "You have a new message from ${chatItem.name}")
+                        FirestoreHelper.triggerNotification(this.requireContext(), notification)
+                    }
                     messageAdapter.notifyDataSetChanged()
                 }
             }

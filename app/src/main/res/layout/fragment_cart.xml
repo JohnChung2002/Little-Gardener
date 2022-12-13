@@ -11,7 +11,7 @@
         android:id="@+id/cart_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:title="@string/chat"
+        app:title="@string/cart"
         app:titleTextColor="@color/black"
         android:background="@drawable/main_gradient"
         app:layout_constraintTop_toTopOf="parent"

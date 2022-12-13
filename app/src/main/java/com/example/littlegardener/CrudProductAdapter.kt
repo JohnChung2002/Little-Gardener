@@ -30,13 +30,13 @@ class CrudProductAdapter(private val type: String, private val productList: List
 
     override fun onBindViewHolder(holder: ViewProduct, position: Int) {
         val productItem = productList[position]
-        if (type == "edit") {
+        if (type == "manage") {
             holder.itemView.setOnClickListener {
                 callback.onProductEditClick(productItem)
             }
-        } else if (type == "delete") {
-            holder.itemView.setOnClickListener {
+            holder.itemView.setOnLongClickListener {
                 confirmDelete(productItem)
+                true
             }
         } else {
             holder.itemView.setOnClickListener {
