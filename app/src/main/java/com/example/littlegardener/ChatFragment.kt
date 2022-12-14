@@ -36,20 +36,30 @@ class ChatFragment : Fragment() {
     }
 
     private fun realtimeDBListener() {
+        // Retrieve the current user's data from the database
         val db = FirestoreHelper.getCurrUserDocument()
+        // Add a listener to the user document
         db.addSnapshotListener { snapshot, e ->
             if (e != null) {
                 return@addSnapshotListener
             }
+            // Retrieve the user's chat list
             val chats = snapshot?.data?.get("chatList") as ArrayList<String>
+            // Clear the recycler view chat list
             chatRecyclerList.clear()
+            // Loop through the user's chat list
             for (chatId in chats) {
+                // Retrieve the chat information from the database
                 RealtimeDBHelper.getChatInfo(chatId) { chatItem ->
+                    // Add the chat data to the recycler view chat list
                     chatRecyclerList.add(chatItem)
+                    // Check if the chat status is unread
                     if (chatItem.status == "Unread") {
+                        //if yes, trigger a notification to the user
                         val notification = Notification(title = "New message", description = "You have a new message from ${chatItem.name}")
                         FirestoreHelper.triggerNotification(this.requireContext(), notification)
                     }
+                    // Notify the adapter that the data has changed
                     messageAdapter.notifyDataSetChanged()
                 }
             }

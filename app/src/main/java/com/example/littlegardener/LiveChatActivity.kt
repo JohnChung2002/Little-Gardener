@@ -95,17 +95,26 @@ class LiveChatActivity : AppCompatActivity() {
     }
 
     private fun realtimeDBListener() {
+        // Retrieve the chat history based on the chat id
         val ref = RealtimeDBHelper.getChatReference(chatItem.id)
+        // Add a listener to the chat reference
         eventListener = ref.addValueEventListener(object : ValueEventListener {
+            // Trigger when the data is changed
             override fun onDataChange(snapshot: DataSnapshot) {
+                // Loop the data snapshot
                 for (child in snapshot.children) {
+                    // Get the message object
                     val message = child.getValue(Message::class.java)
                     message?.let {
+                        // Add the message to the hashmap
                         messageHashmap[child.key!!] = it
                     }
                 }
+                // Set the chat status to read if the chat is opened
                 RealtimeDBHelper.setMessageStatus(chatItem.id, AuthenticationHelper.getCurrentUserUid(), "Read")
+                // Notify the adapter that the data has changed
                 chatAdapter.notifyDataSetChanged()
+                // Scroll to the bottom of the recycler view
                 recyclerView.scrollToPosition(chatAdapter.itemCount - 1)
             }
 
@@ -114,21 +123,17 @@ class LiveChatActivity : AppCompatActivity() {
         })
     }
 
+    // declare the activity result launcher for the attach image intent
     private val attachImage = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        // check if the result is successful (attach image intent was successful)
         if (result.resultCode == RESULT_OK) {
             result.data?.data?.let { uri ->
+                // upload the image to firebase storage
                 StorageHelper.uploadImage(this, uri) {
+                    // send the message with the image url
                     val message = Message(AuthenticationHelper.getCurrentUserUid(), chatItem.receiver,"image", it, FirestoreHelper.getCurrTimestamp())
-                    if (type != "exists") {
-                        RealtimeDBHelper.createChat(chatItem.receiver) { id ->
-                            chatItem.id = id
-                            type = "exists"
-                            realtimeDBListener()
-                            RealtimeDBHelper.pushMessage(chatItem.id, chatItem.receiver, message)
-                        }
-                    } else {
-                        RealtimeDBHelper.pushMessage(chatItem.id, chatItem.receiver, message)
-                    }
+                    // push the message to the chat
+                    pushMessage(message)
                 }
             }
         }
@@ -141,19 +146,33 @@ class LiveChatActivity : AppCompatActivity() {
         finish()
     }
 
-    private fun sendMessage() {
-        messageEditText.text.toString().let {
-            val message = Message(AuthenticationHelper.getCurrentUserUid(), chatItem.receiver,"message", it, FirestoreHelper.getCurrTimestamp())
-            if (type != "exists") {
-                RealtimeDBHelper.createChat(chatItem.receiver) { id ->
-                    chatItem.id = id
-                    type = "exists"
-                    realtimeDBListener()
-                    RealtimeDBHelper.pushMessage(chatItem.id, chatItem.receiver, message)
-                }
-            } else {
+    private fun pushMessage(message: Message) {
+        //check if the chat was created before (if there are any chat history)
+        //if not, create a new chat
+        if (type != "exists") {
+            //create the chat and get the id
+            RealtimeDBHelper.createChat(chatItem.receiver) { id ->
+                chatItem.id = id
+                type = "exists"
+                //add the listener to the chat
+                realtimeDBListener()
+                //push the message to the chat
                 RealtimeDBHelper.pushMessage(chatItem.id, chatItem.receiver, message)
             }
+            //if yes, push the message to the chat
+        } else {
+            RealtimeDBHelper.pushMessage(chatItem.id, chatItem.receiver, message)
+        }
+    }
+
+    private fun sendMessage() {
+        //extract message from edit text
+        messageEditText.text.toString().let {
+            //create message object with data
+            val message = Message(AuthenticationHelper.getCurrentUserUid(), chatItem.receiver,"message", it, FirestoreHelper.getCurrTimestamp())
+            //push the message to the chat
+            pushMessage(message)
+            //clear the edit text
             messageEditText.text.clear()
         }
     }
