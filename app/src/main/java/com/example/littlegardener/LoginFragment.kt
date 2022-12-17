@@ -1,6 +1,5 @@
 package com.example.littlegardener
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -79,10 +78,10 @@ class LoginFragment : Fragment() {
         }
         signInWithFacebook.setPermissions("email", "public_profile")
         callbackManager = CallbackManager.Factory.create()
-        signInWithFacebook.registerCallback(callbackManager, object :
-            FacebookCallback<LoginResult?> {
-            override fun onSuccess(loginResult: LoginResult?) {
-                callBack.onFacebookLogin(loginResult!!.accessToken)
+        signInWithFacebook.registerCallback(callbackManager, object:
+            FacebookCallback<LoginResult> {
+            override fun onSuccess(loginResult: LoginResult) {
+                callBack.onFacebookLogin(loginResult.accessToken)
             }
 
             override fun onCancel() {
